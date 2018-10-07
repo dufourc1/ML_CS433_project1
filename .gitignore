@@ -1,2 +1,3 @@
 ## avoiding large files in data repository to be seen
 /data
+data/
