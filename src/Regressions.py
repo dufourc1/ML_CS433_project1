@@ -13,7 +13,7 @@ from data_utility import *
 # GRADIENT DESCENT METHODS
 #-----------------------------------------
 
-def gradient_descent(y, tx, initial_w, max_iters, gamma, all_step=False, printing=False):
+def least_squares_GD(y, tx, initial_w, max_iters, gamma, all_step=False, printing=False):
     """Gradient descent algorithm.
     Return: w, loss
     ******************
@@ -41,7 +41,7 @@ def gradient_descent(y, tx, initial_w, max_iters, gamma, all_step=False, printin
     else :
         return ws[-1], losses[-1]
 
-def stochastic_gradient_descent(y, tx, initial_w, batch_size, max_iters, gamma):
+def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma):
     """Stochastic gradient descent."""
     # Define parameters to store w and loss
     ws = [initial_w]
@@ -67,22 +67,6 @@ def stochastic_gradient_descent(y, tx, initial_w, batch_size, max_iters, gamma):
 #************************************************
 #LEAST SQUARES
 #------------------------------------------------
-
-def least_squares_GD(y, tx, initial_w, max_iters, gamma):
-    # Define parameters to store w and loss
-    w = initial_w
-    for n_iter in range(max_iters):
-        # compute loss, gradient
-        grad, err = compute_gradient(y, tx, w)
-        loss = calculate_mse(err)
-        # gradient w by descent update
-        w = w - gamma * grad
-        #print("Gradient Descent({bi}/{ti}): loss={l}, w0={w0}, w1={w1}".format(bi=n_iter, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
-    return (w,loss)
-
-def least_squares_SGD(y, tx, initial_w,max_iters, gamma):
-
-    return (w,loss)
 
 def least_squares(y, tx):
     """
