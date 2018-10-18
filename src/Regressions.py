@@ -7,8 +7,6 @@ All functions return w and loss , which is the last weight vector of the method 
 import numpy as np
 
 from costs import *
-from gradient_descent import *
-from stochastic_gradient_descent import *
 from data_utility import *
 
 #*****************************************
