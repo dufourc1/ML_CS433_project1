@@ -8,11 +8,9 @@ from costs import *
 from gradient_descent import *
 from stochastic_gradient_descent import *
 
-def compute_gradient(y,tx,w):
-    """Compute the gradient."""
-    err = y - tx.dot(w)
-    grad = -tx.T.dot(err) / len(err)
-    return grad, err
+#************************************************
+#LEAST SQUARES
+#------------------------------------------------
 
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     # Define parameters to store w and loss
@@ -30,6 +28,22 @@ def least_squares_SGD(y, tx, initial_w,max_iters, gamma):
 
     return (w,loss)
 
-def least_squares(y,tx):
+def least_squares(y, tx):
+    """
+    Calculate the least squares solution.
+    Returns w.
+    """
+    w = np.linalg.solve(tx.T.dot(tx),tx.T.dot(y))
 
-    return (w,loss)
+    return w
+
+#**************************************************
+# RIDGE REGRESSION
+#--------------------------------------------------
+
+def ridge_regression(y, tx, lambda_):
+    """implement ridge regression.
+    Returns w."""
+    a = tx.T.dot(tx) + 2*tx.shape[0]*lambda_*np.identity(tx.shape[1])
+
+    return np.linalg.solve(a,tx.T.dot(y))
