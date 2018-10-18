@@ -4,9 +4,12 @@ functions to implement least squares using gradient descent, stochastic gradient
 All functions return (w,loss), which is the last weight vector of the method and the corresponding loss
 '''
 
+import numpy as np
+
 from costs import *
 from gradient_descent import *
 from stochastic_gradient_descent import *
+from data_utility import *
 
 #************************************************
 #LEAST SQUARES
@@ -35,7 +38,7 @@ def least_squares(y, tx):
     """
     w = np.linalg.solve(tx.T.dot(tx),tx.T.dot(y))
 
-    return w
+    return w, compute_mse(error(y,tx,w))
 
 #**************************************************
 # RIDGE REGRESSION
@@ -47,3 +50,31 @@ def ridge_regression(y, tx, lambda_):
     a = tx.T.dot(tx) + 2*tx.shape[0]*lambda_*np.identity(tx.shape[1])
 
     return np.linalg.solve(a,tx.T.dot(y))
+
+#**************************************************
+# CROSS VALIDATION
+#--------------------------------------------------
+
+def cross_validation(y, x, k_indices, k, lambda_, degree):
+    """return the loss of ridge regression."""
+
+    # get k'th subgroup in test, others in train: DONE
+    x_te = x[k_indices[k]]
+    x_te = x[k_indices[k]]
+    y_te = y[k_indices[k]]
+    k_complement = np.ravel(np.vstack([k_indices[:k],k_indices[k+1:]]))
+    x_tr = x[k_complement]
+    y_tr = y[k_complement]
+
+    # form data with polynomial degree: DONE
+    x_te = build_poly(x_te, degree)
+    x_tr = build_poly(x_tr, degree)
+
+    # ridge regression: DONE
+    w = ridge_regression(y_tr, x_tr, lambda_)
+
+    # calculate the loss for train and test data: DONE
+    loss_tr = compute_RMSE(y_tr, x_tr, w)
+    loss_te = compute_RMSE(y_te, x_te, w)
+
+    return loss_tr, loss_te
