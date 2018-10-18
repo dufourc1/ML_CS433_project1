@@ -23,7 +23,7 @@ def split_data(x, y, ratio, seed=1):
     """
     # set seed
     np.random.seed(seed)
-    
+
     set_size = len(y)
     n = int(np.floor(set_size*ratio))
     shuffled_i = np.random.permutation(set_size)
@@ -54,3 +54,24 @@ def build_poly(x, degree):
         tx[:,i]=x**i
 
     return tx
+
+#*************************************************
+# PLOTS FUNCTIONS
+#-------------------------------------------------
+
+def scatter(x, which, other_f =False, against=None):
+    '''Scatter plot of the features of x.
+    Arguments:
+        other_f: bool, if True give an argument in against
+        against: an np.array of same size of x features against which you will have the scatterplot.'''
+        
+    for i in which:
+        feature = x[:,i]
+        if not other_f:
+            if len(feature[feature==-999]) > 0: #If there is some misplaced value we do not include them in the scatterplot
+                print("ATTENTION: missing values in {i}th feature removed!".format(i=i))
+            feature = feature[feature>-999]
+            against = range(len(feature))
+        plt.scatter(feature, against)
+        print("Scatter plot for {i}th feature :".format(i=i))
+        plt.show()
