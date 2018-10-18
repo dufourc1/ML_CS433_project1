@@ -1,7 +1,7 @@
 '''
 functions to implement least squares using gradient descent, stochastic gradient descent or normal equation
 
-All functions return (w,loss), which is the last weight vector of the method and the corresponding loss
+All functions return w and loss , which is the last weight vector of the method and the corresponding loss
 '''
 
 import numpy as np
@@ -10,6 +10,61 @@ from costs import *
 from gradient_descent import *
 from stochastic_gradient_descent import *
 from data_utility import *
+
+#*****************************************
+# GRADIENT DESCENT METHODS
+#-----------------------------------------
+
+def gradient_descent(y, tx, initial_w, max_iters, gamma, all_step=False, printing=False):
+    """Gradient descent algorithm.
+    Return: w, loss
+    ******************
+    all_step    If 'True' gives all the computed parameters and respective losses. False by default.
+    printing    If 'True' print the loss and first 2 parameters estimate at each step. False by defalt.
+    """
+    # Define parameters to store w and loss
+    ws = [initial_w]
+    losses = []
+    w = initial_w
+    for n_iter in range(max_iters):
+        # compute loss, gradient
+        grad, err = compute_gradient(y, tx, w)
+        loss = calculate_mse(err)
+        # gradient w by descent update
+        w = w - gamma * grad
+        # store w and loss
+        ws.append(w)
+        losses.append(loss)
+        if printing:
+            print("Gradient Descent({bi}/{ti}): loss={l}, w0={w0}, w1={w1}".format(
+              bi=n_iter, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
+    if all_step:
+        return ws, losses
+    else :
+        return ws[-1], losses[-1]
+
+def stochastic_gradient_descent(y, tx, initial_w, batch_size, max_iters, gamma):
+    """Stochastic gradient descent."""
+    # Define parameters to store w and loss
+    ws = [initial_w]
+    losses = []
+    w = initial_w
+
+    for n_iter in range(max_iters):
+        for y_batch, tx_batch in batch_iter(y, tx, batch_size=batch_size, num_batches=1):
+            # compute a stochastic gradient and loss
+            grad, _ = compute_gradient(y_batch, tx_batch, w)
+            # update w through the stochastic gradient update
+            w = w - gamma * grad
+            # calculate loss
+            loss = compute_loss(y, tx, w)
+            # store w and loss
+            ws.append(w)
+            losses.append(loss)
+
+        print("SGD({bi}/{ti}): loss={l}, w0={w0}, w1={w1}".format(
+              bi=n_iter, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
+    return losses, ws
 
 #************************************************
 #LEAST SQUARES
@@ -34,7 +89,7 @@ def least_squares_SGD(y, tx, initial_w,max_iters, gamma):
 def least_squares(y, tx):
     """
     Calculate the least squares solution.
-    Returns w.
+    Returns w and mse loss.
     """
     w = np.linalg.solve(tx.T.dot(tx),tx.T.dot(y))
 
@@ -46,10 +101,10 @@ def least_squares(y, tx):
 
 def ridge_regression(y, tx, lambda_):
     """implement ridge regression.
-    Returns w."""
+    Returns w and rmse loss"""
     a = tx.T.dot(tx) + 2*tx.shape[0]*lambda_*np.identity(tx.shape[1])
-
-    return np.linalg.solve(a,tx.T.dot(y))
+    w = np.linalg.solve(a,tx.T.dot(y))
+    return w, compute_RMSE(error(y,tx,w))
 
 #**************************************************
 # CROSS VALIDATION

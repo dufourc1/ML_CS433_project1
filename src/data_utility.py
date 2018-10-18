@@ -23,10 +23,7 @@ def split_data(x, y, ratio, seed=1):
     """
     # set seed
     np.random.seed(seed)
-    # ***************************************************
-    # split the data based on the given ratio: DONE
-    # ***************************************************
-
+    
     set_size = len(y)
     n = int(np.floor(set_size*ratio))
     shuffled_i = np.random.permutation(set_size)
@@ -57,4 +54,3 @@ def build_poly(x, degree):
         tx[:,i]=x**i
 
     return tx
-    

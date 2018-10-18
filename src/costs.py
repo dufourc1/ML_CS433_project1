@@ -2,7 +2,8 @@
 """Functions to compute loss. | || || |_
 Contains:
     error
-    mse, mae, rmse"""
+    mse, mae, rmse
+    mse gradient"""
 
 import math
 import numpy as np
@@ -32,3 +33,9 @@ def compute_loss(y, tx, w):
     e = y - tx.dot(w)
     raise notImplementedError
     # return calculate_mae(e)
+
+def compute_gradient(y, tx, w):
+    """Compute the gradient of mse."""
+    err = y - tx.dot(w)
+    grad = -tx.T.dot(err) / len(err)
+    return grad, err
