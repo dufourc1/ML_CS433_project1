@@ -8,6 +8,7 @@ Contains:
 import math
 import numpy as np
 
+
 def error(y, tx, w):
     '''Compute estimation error'''
     return y - tx.dot(w)
