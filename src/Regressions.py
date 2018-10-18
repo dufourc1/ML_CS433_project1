@@ -91,7 +91,7 @@ def least_squares(y, tx):
     """
     w = np.linalg.solve(tx.T.dot(tx),tx.T.dot(y))
 
-    return w, compute_mse(error(y,tx,w))
+    return w, calculate_mse(error(y,tx,w))
 
 #**************************************************
 # RIDGE REGRESSION
