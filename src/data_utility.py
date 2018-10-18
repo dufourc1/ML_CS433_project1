@@ -9,7 +9,10 @@ Contains:
 '''
 
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 
+sns.set()
 #*************************************************
 # GENERAL FUNCTIONS
 #-------------------------------------------------
@@ -64,7 +67,7 @@ def scatter(x, which, other_f =False, against=None):
     Arguments:
         other_f: bool, if True give an argument in against
         against: an np.array of same size of x features against which you will have the scatterplot.'''
-        
+
     for i in which:
         feature = x[:,i]
         if not other_f:

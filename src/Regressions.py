@@ -41,7 +41,7 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma, all_step=False, printin
     else :
         return ws[-1], losses[-1]
 
-def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma):
+def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma, all_step=False, printing=False):
     """Stochastic gradient descent."""
     # Define parameters to store w and loss
     ws = [initial_w]
@@ -59,10 +59,13 @@ def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma):
             # store w and loss
             ws.append(w)
             losses.append(loss)
-
-        print("SGD({bi}/{ti}): loss={l}, w0={w0}, w1={w1}".format(
+        if printing:
+            print("Gradient Descent({bi}/{ti}): loss={l}, w0={w0}, w1={w1}".format(
               bi=n_iter, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
-    return losses, ws
+    if all_step:
+        return ws, losses
+    else :
+        return ws[-1], losses[-1]
 
 #************************************************
 #LEAST SQUARES
