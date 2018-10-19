@@ -52,10 +52,13 @@ def build_k_indices(y, k_fold, seed):
 def build_poly(x, degree):
     """polynomial basis functions for input data x, for j=0 up to j=degree.
     Return the augmented basis matrix tx."""
-    tx = np.zeros((x.shape[0],degree+1))
-    for i in range(degree+1):
-        tx[:,i]=x**i
 
+    n,p = x.shape
+    tx = np.zeros((n,(degree*p)+1))
+    tx[:,0] = 1
+    for feature in range(p):
+        for i in range(1,degree+1):
+            tx[:,feature*degree+i]=(x[:,feature])**i
     return tx
 
 def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
@@ -103,3 +106,14 @@ def scatter(x, which, other_f =False, against=None):
         plt.scatter(feature, against)
         print("Scatter plot for {i}th feature :".format(i=i))
         plt.show()
+
+def cross_validation_visualization(lambds, mse_tr, mse_te):
+    """visualization the curves of mse_tr and mse_te."""
+    plt.semilogx(lambds, mse_tr, marker=".", color='b', label='train error')
+    plt.semilogx(lambds, mse_te, marker=".", color='r', label='test error')
+    plt.xlabel("lambda")
+    plt.ylabel("rmse")
+    plt.title("cross validation")
+    plt.legend(loc=2)
+    plt.grid(True)
+    plt.savefig("cross_validation")
