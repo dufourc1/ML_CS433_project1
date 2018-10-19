@@ -41,7 +41,7 @@ def split_data(x, y, ratio, seed=1):
 
 def build_k_indices(y, k_fold, seed):
     """build k indices for k-fold."""
-    num_row = y.shape[0]
+    num_row = len(y)
     interval = int(num_row / k_fold)
     np.random.seed(seed)
     indices = np.random.permutation(num_row)

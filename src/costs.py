@@ -11,7 +11,8 @@ import numpy as np
 
 def error(y, tx, w):
     '''Compute estimation error'''
-    return y - tx.dot(w)
+    e = y - tx.dot(w)
+    return e
 
 def calculate_mse(e):
     """Calculate the mse for vector e."""
@@ -26,6 +27,7 @@ def calculate_rmse(e):
     """ Calculate the mse for vector e."""
     return math.sqrt(2.0*calculate_mse(e))
 
+# TODO: define a better general function.
 def compute_loss(y, tx, w):
     """Calculate the loss.
 
@@ -37,6 +39,6 @@ def compute_loss(y, tx, w):
 
 def compute_gradient(y, tx, w):
     """Compute the gradient of mse."""
-    err = y - tx.dot(w)
+    err = error(y, tx, w)
     grad = -tx.T.dot(err) / len(err)
     return grad, err

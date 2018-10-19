@@ -89,7 +89,7 @@ def ridge_regression(y, tx, lambda_):
     Returns w and rmse loss"""
     a = tx.T.dot(tx) + 2*tx.shape[0]*lambda_*np.identity(tx.shape[1])
     w = np.linalg.solve(a,tx.T.dot(y))
-    return w, compute_RMSE(error(y,tx,w))
+    return w, calculate_rmse(error(y,tx,w))
 
 #**************************************************
 # CROSS VALIDATION
@@ -113,16 +113,15 @@ def single_cross_validation(y, x, k_indices, k, lambda_, degree=0):
         x_tr = build_poly(x_tr, degree)
 
     # ridge regression
-    w = ridge_regression(y_tr, x_tr, lambda_)
+    w, loss_tr = ridge_regression(y_tr, x_tr, lambda_)
 
-    # calculate the loss for train and test data
-    loss_tr = compute_RMSE(error(y_tr, x_tr, w))
-    loss_te = compute_RMSE(error(y_te, x_te, w))
+    # calculate the loss for test data
+    loss_te = calculate_rmse(error(y_te, x_te, w))
 
     return w, loss_tr, loss_te
 
 def cross_validation(y, x, k_fold, degree=0, lambdas=None, seed=1):
-    if lambdas==None:
+    if lambdas is None:
         lambdas = np.logspace(-4, 0, 30)
     # split data in k fold
     k_indices = build_k_indices(y, k_fold, seed)
@@ -131,16 +130,21 @@ def cross_validation(y, x, k_fold, degree=0, lambdas=None, seed=1):
     rmse_te = []
     w = []
 
+    if degree>0 :
+        # form data with polynomial degree
+        x = build_poly(x, degree)
+
+
     # cross validation
     for lambda_ in lambdas:
         loss_tr = np.zeros(k_fold)
         loss_te = np.zeros(k_fold)
-        w_l = np.zeros(k_fold)
+        w_l = np.zeros((x.shape[1],k_fold))
         for k in range(k_fold):
-            w_l[k], loss_tr[k], loss_te[k] = cross_validation(y, x, k_indices, k, lambda_, degree)
+            w_l[:,k], loss_tr[k], loss_te[k] = single_cross_validation(y, x, k_indices, k, lambda_, degree=0)
         rmse_tr.append(np.mean(loss_tr))
         rmse_te.append(np.mean(loss_te))
-        w.append(np.mean(w_l))
+        w.append(np.mean(w_l, axis=1))
 
     cross_validation_visualization(lambdas, rmse_tr, rmse_te)
     return w, rmse_tr, rmse_te
