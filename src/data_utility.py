@@ -117,3 +117,43 @@ def cross_validation_visualization(lambds, mse_tr, mse_te):
     plt.legend(loc=2)
     plt.grid(True)
     plt.savefig("cross_validation")
+
+
+
+#**********************************************
+# DATA INPUTATION
+#----------------------------------------------
+
+
+def inputation(data, method = "mean",features_treated = [1,19,20,21] ):
+    '''
+    input the missing values with the different methods: mean,median
+
+    example of use: data_inputed = inputation(data,method = "median")
+
+    data is the data you wish to inpute
+    features_treated is the array containing the columns of the data you want to inpute,
+    the default configuration is for the all dataset (where there is no features with more than
+    70 % of NA's and we inpute the missing values where there are some)
+
+    for the moment only treat the features number 1,19,20,21 but could be easily generalized if felt necessary
+    '''
+
+
+    if method == "mean":
+        for i in features_treated:
+            t = data[:,i]
+            mean = np.mean(t[t != -999])
+            data_inputed = data.copy()
+            data_inputed[data_inputed == -999] = mean
+
+        return data_inputed
+
+    if method == "median":
+        for i in features_treated:
+            t = data[:,i]
+            mean = np.median(t[t != -999])
+            data_inputed = data.copy()
+            data_inputed[data_inputed == -999] = mean
+
+        return data_inputed
