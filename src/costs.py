@@ -7,11 +7,19 @@ Contains:
 
 import math
 import numpy as np
-
+from data_utility import *
 
 def error(y, tx, w):
     '''Compute estimation error'''
     e = y - tx.dot(w)
+    return e
+
+def category_error(y, tx, w):
+    '''Gives error for categorization (2 coategories coded as 0-1)
+    Input true values as y, features as tx and estimated weights as w'''
+    y_hat = categories(tx.dot(w))
+    e = np.zeros(len(y_hat))
+    e[y != y_hat] = 1
     return e
 
 def calculate_mse(e):

@@ -157,3 +157,12 @@ def inputation(data, method = "mean",features_treated = [1,19,20,21] ):
             data_inputed[data_inputed == -999] = mean
 
         return data_inputed
+
+#*************************************************
+# CATEGORISATION
+#-------------------------------------------------
+
+def categories(y_hat):
+    y_hat[y_hat >= 0.5] = 1
+    y_hat[y_hat < 0.5] = 0
+    return y_hat

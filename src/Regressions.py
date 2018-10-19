@@ -97,7 +97,8 @@ def ridge_regression(y, tx, lambda_):
 
 def single_cross_validation(y, x, k_indices, k, lambda_, degree=0):
     """return the loss of ridge regression.
-    Requires to fix k_indices, k and lambda_."""
+    Requires to fix k_indices, k and lambda_.
+    ATTENTION: as of this implementation, the error for test set is considered as if the estimation is CATEGORICAL"""
 
     # get k'th subgroup in test, others in train
     x_te = x[k_indices[k]]
@@ -116,7 +117,7 @@ def single_cross_validation(y, x, k_indices, k, lambda_, degree=0):
     w, loss_tr = ridge_regression(y_tr, x_tr, lambda_)
 
     # calculate the loss for test data
-    loss_te = calculate_rmse(error(y_te, x_te, w))
+    loss_te = calculate_mae(category_error(y_te, x_te, w)) #Now using MAE for the test error (already gives mean of wrong)
 
     return w, loss_tr, loss_te
 
