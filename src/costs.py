@@ -35,15 +35,29 @@ def calculate_rmse(e):
     """ Calculate the mse for vector e."""
     return math.sqrt(2.0*calculate_mse(e))
 
-# TODO: define a better general function.
-def compute_loss(y, tx, w):
+def calculate_loss(y, tx, w, loss, kind):
     """Calculate the loss.
-
-    You can calculate the loss using different methods.
+    Arguments:
+    y       Target;
+    tx      Observed features;
+    w       Estimated weights;
+    loss    Desired loss function (possible: 'mae', 'mse', 'rmse');
+    kind    Kind of target (possible: 'cont', 'cat')
     """
-    e = y - tx.dot(w)
-    raise notImplementedError
-    # return calculate_mae(e)
+    loss_switcher = {
+        'mae': calculate_mae,
+        'mse': calculate_mse,
+        'rmse': calculate_rmse
+    }
+    err_switcher = {
+        'cont': error,
+        'cat': category_error
+    }
+    loss_func = loss_switcher.get(loss, calculate_mse)
+    err_func = err_switcher.get(kind, error)
+
+    return loss_func(err_func(y, tx, w))
+
 
 def compute_gradient(y, tx, w):
     """Compute the gradient of mse."""

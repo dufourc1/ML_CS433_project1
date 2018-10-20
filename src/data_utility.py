@@ -163,6 +163,7 @@ def inputation(data, method = "mean",features_treated = [1,19,20,21] ):
 #-------------------------------------------------
 
 def categories(y_hat):
-    y_hat[y_hat >= 0.5] = 1
-    y_hat[y_hat < 0.5] = 0
-    return y_hat
+    y_cat = np.copy(y_hat)
+    y_cat[y_hat >= 0.5] = 1
+    y_cat[y_hat < 0.5] = 0
+    return y_cat
