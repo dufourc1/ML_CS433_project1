@@ -152,9 +152,9 @@ def inputation(data, method = "mean",features_treated = [1,19,20,21] ):
     if method == "median":
         for i in features_treated:
             t = data[:,i]
-            mean = np.median(t[t != -999])
+            median = np.median(t[t != -999])
             data_inputed = data.copy()
-            data_inputed[data_inputed == -999] = mean
+            data_inputed[data_inputed == -999] = median
 
         return data_inputed
 

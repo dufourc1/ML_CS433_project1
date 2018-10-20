@@ -86,16 +86,16 @@ def least_squares(y, tx):
 
 def ridge_regression(y, tx, lambda_):
     """implement ridge regression.
-    Returns w and rmse loss"""
+    Returns w and loss loss"""
     a = tx.T.dot(tx) + 2*tx.shape[0]*lambda_*np.identity(tx.shape[1])
     w = np.linalg.solve(a,tx.T.dot(y))
-    return w, calculate_rmse(error(y,tx,w))
+    return w, calculate_loss(y, tx, w, 'mse', 'cont')
 
 #**************************************************
 # CROSS VALIDATION
 #--------------------------------------------------
 
-def single_cross_validation(y, x, k_indices, k, lambda_, degree=0):
+def single_cross_validation(y, x, k_indices, k, lambda_, degree=0, loss='rmse', kind='cont'):
     """return the loss of ridge regression.
     Requires to fix k_indices, k and lambda_.
     ATTENTION: as of this implementation, the error for test set is considered as if the estimation is CATEGORICAL"""
@@ -114,27 +114,26 @@ def single_cross_validation(y, x, k_indices, k, lambda_, degree=0):
         x_tr = build_poly(x_tr, degree)
 
     # ridge regression
-    w, loss_tr = ridge_regression(y_tr, x_tr, lambda_)
+    w, single_loss_tr = ridge_regression(y_tr, x_tr, lambda_)
 
-    # calculate the loss for test data
-    loss_te = calculate_mae(category_error(y_te, x_te, w)) #Now using MAE for the test error (already gives mean of wrong)
+    # calculate the loss for test and train data
+    single_loss_tr = calculate_loss(y_tr, x_tr, w, loss, kind)
+    single_loss_te = calculate_loss(y_te, x_te, w, loss, kind)
+    return w, single_loss_tr, single_loss_te
 
-    return w, loss_tr, loss_te
-
-def cross_validation(y, x, k_fold, degree=0, lambdas=None, seed=1):
+def cross_validation(y, x, k_fold, degree=0, lambdas=None, seed=1, loss='loss', kind='cont'):
     '''
-        w,rmse_tr,rmse_te = cross_validation(y,x,5)
+        Run ridge regression cross validation for parameters lambda in lambda.
+        You can choose the loss you get and the kind of target.
     '''
-
-
 
     if lambdas is None:
         lambdas = np.logspace(-4, 0, 30)
     # split data in k fold
     k_indices = build_k_indices(y, k_fold, seed)
     # define lists to store the loss of training data and test data
-    rmse_tr = []
-    rmse_te = []
+    loss_tr = []
+    loss_te = []
     w = []
 
     if degree>0 :
@@ -144,14 +143,14 @@ def cross_validation(y, x, k_fold, degree=0, lambdas=None, seed=1):
 
     # cross validation
     for lambda_ in lambdas:
-        loss_tr = np.zeros(k_fold)
-        loss_te = np.zeros(k_fold)
+        single_loss_tr = np.zeros(k_fold)
+        single_loss_te = np.zeros(k_fold)
         w_l = np.zeros((x.shape[1],k_fold))
         for k in range(k_fold):
-            w_l[:,k], loss_tr[k], loss_te[k] = single_cross_validation(y, x, k_indices, k, lambda_, degree=0)
-        rmse_tr.append(np.mean(loss_tr))
-        rmse_te.append(np.mean(loss_te))
+            w_l[:,k], single_loss_tr[k], single_loss_te[k] = single_cross_validation(y, x, k_indices, k, lambda_, degree=0, loss=loss, kind=kind)
+        loss_tr.append(np.mean(single_loss_tr))
+        loss_te.append(np.mean(single_loss_te))
         w.append(np.mean(w_l, axis=1))
 
-    cross_validation_visualization(lambdas, rmse_tr, rmse_te)
-    return w, rmse_tr, rmse_te
+    cross_validation_visualization(lambdas, loss_tr, loss_te)
+    return w, loss_tr, loss_te
