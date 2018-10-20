@@ -122,6 +122,12 @@ def single_cross_validation(y, x, k_indices, k, lambda_, degree=0):
     return w, loss_tr, loss_te
 
 def cross_validation(y, x, k_fold, degree=0, lambdas=None, seed=1):
+    '''
+        w,rmse_tr,rmse_te = cross_validation(y,x,5)
+    '''
+
+
+
     if lambdas is None:
         lambdas = np.logspace(-4, 0, 30)
     # split data in k fold
