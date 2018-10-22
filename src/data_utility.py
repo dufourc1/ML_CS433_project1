@@ -179,18 +179,20 @@ def split_num_jet(data):
     data_set for the regression even smaller
     '''
 
+    data = data.copy()
+
 
     try :
         num_jet = data[:,22]
     except :
         num_jet = data[22]
 
+
     #split the data depending on the value of num_jet
     data_n2 = np.vstack((data[num_jet == 2], data[num_jet == 3]))
     data_n0 = data[num_jet == 0]
     data_n1 = data[num_jet == 1]
 
-    #inputation in the columns where there are NA, but below 100% of them
     data_n0 = inputation(data_n0,features_treated = [0])
     data_n1 = inputation(data_n1,features_treated = [0])
     data_n2 = inputation(data_n2,features_treated = [0])
@@ -201,9 +203,12 @@ def split_num_jet(data):
     data_n2_modified = np.delete(data_n2,[22],1)
 
 
-    return data_n0_modified,data_n1_modified,data_n2_modified
+    data_n1_modified = standardize_data(data_n1_modified)
+    data_n2_modified = standardize_data(data_n2_modified)
+    data_n0_modified = standardize_data(data_n0_modified)
 
     return data_n0_modified,data_n1_modified,data_n2_modified
+
 
 
 #*************************************************
