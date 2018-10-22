@@ -59,8 +59,8 @@ def calculate_loss(y, tx, w, loss, kind):
     return loss_func(err_func(y, tx, w))
 
 
-def compute_gradient(y, tx, w):
+def compute_gradient(y, tx, w, loss='mse', kind='cont'):
     """Compute the gradient of mse."""
-    err = error(y, tx, w)
+    err = calculate_loss(y, tx, w, loss, kind)
     grad = -tx.T.dot(err) / len(err)
     return grad, err

@@ -13,7 +13,7 @@ from data_utility import *
 # GRADIENT DESCENT METHODS
 #-----------------------------------------
 
-def least_squares_GD(y, tx, initial_w, max_iters, gamma, all_step=False, printing=False):
+def least_squares_GD(y, tx, initial_w, max_iters, gamma, all_step=False, printing=False, loss='mse', kind='cont'):
     """Gradient descent algorithm.
     Return: w, loss
     ******************
@@ -26,8 +26,7 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma, all_step=False, printin
     w = initial_w
     for n_iter in range(max_iters):
         # compute loss, gradient
-        grad, err = compute_gradient(y, tx, w)
-        loss = calculate_mse(err)
+        grad, loss = compute_gradient(y, tx, w, loss, kind)
         # gradient w by descent update
         w = w - gamma * grad
         # store w and loss
@@ -41,7 +40,7 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma, all_step=False, printin
     else :
         return ws[-1], losses[-1]
 
-def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma, all_step=False, printing=False):
+def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma, all_step=False, printing=False, loss='mse', kind='cont'):
     """Stochastic gradient descent."""
     # Define parameters to store w and loss
     ws = [initial_w]
@@ -51,11 +50,11 @@ def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma, all_step=F
     for n_iter in range(max_iters):
         for y_batch, tx_batch in batch_iter(y, tx, batch_size=batch_size, num_batches=1):
             # compute a stochastic gradient and loss
-            grad, _ = compute_gradient(y_batch, tx_batch, w)
+            grad, _ = compute_gradient(y_batch, tx_batch, w, loss, kind)
             # update w through the stochastic gradient update
             w = w - gamma * grad
             # calculate loss
-            loss = calculate_mse(error(y, tx, w))
+            loss = calculate_loss(y, tx, w, loss, kind)
             # store w and loss
             ws.append(w)
             losses.append(loss)
@@ -71,25 +70,50 @@ def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma, all_step=F
 #LEAST SQUARES
 #------------------------------------------------
 
-def least_squares(y, tx):
+def least_squares(y, tx, loss='mse', kind='cont'):
     """
     Calculate the least squares solution.
     Returns w and mse loss.
     """
     w = np.linalg.solve(tx.T.dot(tx),tx.T.dot(y))
 
-    return w, calculate_mse(error(y,tx,w))
+    return w, calculate_loss(y, tx, w, loss, kind)
+
+def least_squares_p(y, tx, parameters, loss='mse', kind='cont'): #this is used to generalize regressions
+    return least_squares(y, tx, loss, kind)
 
 #**************************************************
 # RIDGE REGRESSION
 #--------------------------------------------------
 
-def ridge_regression(y, tx, lambda_):
+def ridge_regression(y, tx, lambda_, loss='mse', kind='cont'):
     """implement ridge regression.
     Returns w and loss loss"""
     a = tx.T.dot(tx) + 2*tx.shape[0]*lambda_*np.identity(tx.shape[1])
     w = np.linalg.solve(a,tx.T.dot(y))
-    return w, calculate_loss(y, tx, w, 'mse', 'cont')
+    return w, calculate_loss(y, tx, w, loss, kind)
+
+#**************************************************
+# GENERAL REGRESSION FUNCTION
+#--------------------------------------------------
+
+def regression(y, tx, method, parameters=None, loss='mse', kind='cont'):
+    '''General regression function.
+    Specify response y, features matrix tx, desired regression method and a parameters list formatted as follows.
+
+    METHOD              PARAMETERS
+    least squares       None
+    ridge               [lambda_]
+
+    '''
+    reg_switcher = {
+        'least squares': least_squares,
+        'ridge': ridge_regression
+    }
+
+    reg = reg_switcher.get(method, least_squares)
+    return reg(y, tx, parameters, loss, kind)
+
 
 #**************************************************
 # CROSS VALIDATION
@@ -114,10 +138,9 @@ def single_cross_validation(y, x, k_indices, k, lambda_, degree=0, loss='rmse', 
         x_tr = build_poly(x_tr, degree)
 
     # ridge regression
-    w, single_loss_tr = ridge_regression(y_tr, x_tr, lambda_)
+    w, single_loss_tr = ridge_regression(y_tr, x_tr, lambda_, loss, kind)
 
-    # calculate the loss for test and train data
-    single_loss_tr = calculate_loss(y_tr, x_tr, w, loss, kind)
+    # calculate the loss for test data
     single_loss_te = calculate_loss(y_te, x_te, w, loss, kind)
     return w, single_loss_tr, single_loss_te
 
