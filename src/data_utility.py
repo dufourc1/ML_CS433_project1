@@ -190,6 +190,11 @@ def split_num_jet(data):
     data_n0 = data[num_jet == 0]
     data_n1 = data[num_jet == 1]
 
+    #inputation in the columns where there are NA, but below 100% of them
+    data_n0 = inputation(data_n0,features_treated = [0])
+    data_n1 = inputation(data_n1,features_treated = [0])
+    data_n2 = inputation(data_n2,features_treated = [0])
+
     #delete the features with 100% of NA depending on the value if num_jet, plud deletion of the feature num_jet
     data_n0_modified = np.delete(data_n0,[4,6,12,23,24,25,26,27,28,22],1)
     data_n1_modified = np.delete(data_n1,[4,5,6,12,26,27,28,22],1)
