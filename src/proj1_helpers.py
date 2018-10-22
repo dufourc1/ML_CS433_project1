@@ -41,7 +41,7 @@ def create_csv_submission(ids, y_pred, name):
                name (string name of .csv output file to be created)
     """
     with open(name, 'w') as csvfile:
-        fieldnames = ['Id', 'Prediction']
+        fieldnames = ['Id', 'Prediction']t
         writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fieldnames)
         writer.writeheader()
         for r1, r2 in zip(ids, y_pred):
