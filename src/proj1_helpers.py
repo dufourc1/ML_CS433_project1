@@ -41,7 +41,7 @@ def create_csv_submission(ids, y_pred, name):
                name (string name of .csv output file to be created)
     """
     with open(name, 'w') as csvfile:
-        fieldnames = ['Id', 'Prediction']t
+        fieldnames = ['Id', 'Prediction']
         writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fieldnames)
         writer.writeheader()
         for r1, r2 in zip(ids, y_pred):
@@ -81,3 +81,9 @@ def standardize(x):
     std_x = np.std(x)
     x = x / std_x
     return x, mean_x, std_x
+
+def standardize_data(data):
+    for i in range(0,data.shape[1]):
+        data[:,i],mean,variance = standardize(data[:,i])
+
+    return data

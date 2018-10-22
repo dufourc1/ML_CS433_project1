@@ -139,6 +139,8 @@ def inputation(data, method = "mean",features_treated = [1,19,20,21] ):
     for the moment only treat the features number 1,19,20,21 but could be easily generalized if felt necessary
     '''
 
+    if features_treated == "all":
+        features_treated = eatures = np.arange(0, data.shape[1], 1)
 
     if method == "mean":
         for i in features_treated:
@@ -168,12 +170,16 @@ def split_num_jet(data):
 
     num_jet0,num_jet1,num_jet2 = split_num_jet(data)
 
+    takes raw data (i.e all the covariates), then return three different dataset depending on the value of num_jet, after
+    normalizing and doing inputation on the data
+
     return an empty array if there is no num_jet with the corresponding value
 
-    takes raw data (i.e all the features ), then return three different dataset depending on the value of num_jet
     the values 2 and 3 are merged since they do not seem to differ a lot and splitting between these two would make the
     data_set for the regression even smaller
     '''
+
+
     try :
         num_jet = data[:,22]
     except :
@@ -188,6 +194,9 @@ def split_num_jet(data):
     data_n0_modified = np.delete(data_n0,[4,6,12,23,24,25,26,27,28,22],1)
     data_n1_modified = np.delete(data_n1,[4,5,6,12,26,27,28,22],1)
     data_n2_modified = np.delete(data_n2,[22],1)
+
+
+    return data_n0_modified,data_n1_modified,data_n2_modified
 
     return data_n0_modified,data_n1_modified,data_n2_modified
 
