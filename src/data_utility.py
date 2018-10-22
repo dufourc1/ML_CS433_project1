@@ -190,7 +190,11 @@ def split_num_jet(data,y):
 
     #split the data depending on the value of num_jet
     data_n2 = np.vstack((data[num_jet == 2], data[num_jet == 3]))
-    y2 = np.vstack((y[num_jet == 2],y[num_jet == 3]))
+    #have to change the dimension otherwise it won't stack them properly
+    y2a = y[num_jet == 2].reshape(len(np.where(num_jet== 2)[0]),1)
+    y2b = y[num_jet == 3].reshape(len(np.where(num_jet== 3)[0]),1)
+    y2 = np.vstack((y2a,y2b))
+    
     data_n0 = data[num_jet == 0]
     y0 = y[num_jet == 0]
     data_n1 = data[num_jet == 1]
