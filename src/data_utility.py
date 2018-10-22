@@ -165,10 +165,10 @@ def inputation(data, method = "mean",features_treated = [1,19,20,21] ):
 #Splitting data depending on the value of jet_num
 #------------------------------------------------
 
-def split_num_jet(data):
+def split_num_jet(data,y):
     '''
 
-    num_jet0,num_jet1,num_jet2 = split_num_jet(data)
+    num_jet0,y0, num_jet1,y1, num_jet2,y2 = split_num_jet(data)
 
     takes raw data (i.e all the covariates), then return three different dataset depending on the value of num_jet, after
     normalizing and doing inputation on the data
@@ -180,7 +180,7 @@ def split_num_jet(data):
     '''
 
     data = data.copy()
-
+    y = y.copy()
 
     try :
         num_jet = data[:,22]
@@ -190,9 +190,14 @@ def split_num_jet(data):
 
     #split the data depending on the value of num_jet
     data_n2 = np.vstack((data[num_jet == 2], data[num_jet == 3]))
+    y2 = np.vstack((y[num_jet == 2],y[num_jet == 3]))
     data_n0 = data[num_jet == 0]
+    y0 = y[num_jet == 0]
     data_n1 = data[num_jet == 1]
+    y1 = y[num_jet == 1]
 
+
+    #the only feature where there will be NA left after the next step
     data_n0 = inputation(data_n0,features_treated = [0])
     data_n1 = inputation(data_n1,features_treated = [0])
     data_n2 = inputation(data_n2,features_treated = [0])
@@ -207,7 +212,7 @@ def split_num_jet(data):
     data_n2_modified = standardize_data(data_n2_modified)
     data_n0_modified = standardize_data(data_n0_modified)
 
-    return data_n0_modified,data_n1_modified,data_n2_modified
+    return data_n0_modified,y0,data_n1_modified,y1,data_n2_modified,y2
 
 
 
