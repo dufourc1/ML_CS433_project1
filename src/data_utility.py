@@ -7,6 +7,7 @@ Contains:
     build_poly
 
 '''
+from proj1_helpers import *
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -194,7 +195,7 @@ def split_num_jet(data,y):
     y2a = y[num_jet == 2].reshape(len(np.where(num_jet== 2)[0]),1)
     y2b = y[num_jet == 3].reshape(len(np.where(num_jet== 3)[0]),1)
     y2 = np.vstack((y2a,y2b))
-    
+
     data_n0 = data[num_jet == 0]
     y0 = y[num_jet == 0]
     data_n1 = data[num_jet == 1]
