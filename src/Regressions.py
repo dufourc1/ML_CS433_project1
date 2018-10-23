@@ -120,9 +120,9 @@ def regression(y, tx, method, parameters=None, loss='mse', kind='cont'):
 # CROSS VALIDATION
 #--------------------------------------------------
 
-def single_cross_validation(y, x, k_indices, k, lambda_, degree=0, loss='rmse', kind='cont'):
-    """return the loss of ridge regression.
-    Requires to fix k_indices, k and lambda_.
+def single_cross_validation(y, x, k_indices, k, method='least_squares', degree=0, hyper_parameters=None, loss='mse', kind='cont'):
+    """return the loss of any regression.
+    For informations on methods and parameters and errors see respectively regression() and compute_loss().
     ATTENTION: as of this implementation, the error for test set is considered as if the estimation is CATEGORICAL"""
 
     # get k'th subgroup in test, others in train
@@ -139,20 +139,23 @@ def single_cross_validation(y, x, k_indices, k, lambda_, degree=0, loss='rmse', 
         x_tr = build_poly(x_tr, degree)
 
     # ridge regression
-    w, single_loss_tr = ridge_regression(y_tr, x_tr, lambda_, loss, kind)
+    w, single_loss_tr = regression(y_tr, x_tr, method, hyper_parameters, loss, kind)
 
     # calculate the loss for test data
     single_loss_te = calculate_loss(y_te, x_te, w, loss, kind)
     return w, single_loss_tr, single_loss_te
 
-def cross_validation(y, x, k_fold, degree=0, lambdas=None, seed=1, loss='mse', kind='cont'):
+def cross_validation(y, x, k_fold, method='least_squares', degree=0, parameters=None, seed=1, loss='mse', kind='cont', only_best=True):
     '''
         Run ridge regression cross validation for parameters lambda in lambda.
         You can choose the loss you get and the kind of target.
-    '''
 
-    if lambdas is None:
-        lambdas = np.logspace(-4, 0, 30)
+        ATTENTION: degree is gonna be incorporated in parameters in later implementation.
+    '''
+    if parameters is None:
+        hyper_parameters = None
+    else:
+        hyper_parameters = parameters.get('hyper_parameters', None)
     # split data in k fold
     k_indices = build_k_indices(y, k_fold, seed)
     # define lists to store the loss of training data and test data
@@ -162,19 +165,26 @@ def cross_validation(y, x, k_fold, degree=0, lambdas=None, seed=1, loss='mse', k
 
     if degree>0 :
         # form data with polynomial degree
-        x = build_poly(x, degree)
+        tx = build_poly(x, degree)
+        degree = 0
 
 
     # cross validation
-    for lambda_ in lambdas:
+    for hyper_parameter in hyper_parameters:
         single_loss_tr = np.zeros(k_fold)
         single_loss_te = np.zeros(k_fold)
-        w_l = np.zeros((x.shape[1],k_fold))
+        w_l = np.zeros((tx.shape[1],k_fold))
         for k in range(k_fold):
-            w_l[:,k], single_loss_tr[k], single_loss_te[k] = single_cross_validation(y, x, k_indices, k, lambda_, degree=0, loss=loss, kind=kind)
+            w_l[:,k], single_loss_tr[k], single_loss_te[k] = single_cross_validation(y, tx, k_indices, k, method, degree, hyper_parameter, loss=loss, kind=kind)
         loss_tr.append(np.mean(single_loss_tr))
         loss_te.append(np.mean(single_loss_te))
         w.append(np.mean(w_l, axis=1))
 
-    cross_validation_visualization(lambdas, loss_tr, loss_te)
+    cross_validation_visualization(hyper_parameters, loss_tr, loss_te)
+
+    #Routine to gest just best hyper_parameter
+    if only_best:
+        best_i = np.argmax(loss_te)
+        return w[best_i], loss_tr[best_i], loss_te[best_i], hyper_parameters[best_i]
+
     return w, loss_tr, loss_te
