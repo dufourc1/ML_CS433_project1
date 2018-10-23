@@ -144,7 +144,7 @@ def single_cross_validation(y, x, k_indices, k, lambda_, degree=0, loss='rmse', 
     single_loss_te = calculate_loss(y_te, x_te, w, loss, kind)
     return w, single_loss_tr, single_loss_te
 
-def cross_validation(y, x, k_fold, degree=0, lambdas=None, seed=1, loss='loss', kind='cont'):
+def cross_validation(y, x, k_fold, degree=0, lambdas=None, seed=1, loss='mse', kind='cont'):
     '''
         Run ridge regression cross validation for parameters lambda in lambda.
         You can choose the loss you get and the kind of target.

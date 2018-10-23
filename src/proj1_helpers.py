@@ -81,7 +81,6 @@ def standardize(x):
     std_x = np.std(x)
     if std_x != 0:
         x = x / std_x
-        
     return x, mean_x, std_x
 
 def standardize_data(data):
