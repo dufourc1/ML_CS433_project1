@@ -60,7 +60,12 @@ def calculate_loss(y, tx, w, loss, kind):
 
 
 def compute_gradient(y, tx, w, loss='mse', kind='cont'):
-    """Compute the gradient of mse."""
-    err = calculate_loss(y, tx, w, loss, kind)
-    grad = -tx.T.dot(err) / len(err)
-    return grad, err
+
+    if loss == "mse":
+        """Compute the gradient of mse."""
+        err = calculate_loss(y, tx, w, loss, kind)
+        grad = -tx.T.dot(err) / len(err)
+        return grad, err
+
+    else:
+        raise(NotImplementedError)
