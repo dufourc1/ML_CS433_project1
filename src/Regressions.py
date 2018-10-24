@@ -260,7 +260,7 @@ def multi_cross_validation(y, x, k_fold, transformations=[[id, []]], methods=[[l
     m_list = []
 
     for t, t_arg in transformations:
-        tx = t(x, t_arg)
+        tx = t(x, *t_arg)
         for method, parameters in methods:
             for m_arg in parameters:
                 predictor, w, loss_tr, loss_te = cross_validation(y, tx, k_fold, method, m_arg, k_indices)
@@ -276,6 +276,6 @@ def multi_cross_validation(y, x, k_fold, transformations=[[id, []]], methods=[[l
 
     #Routine to gest just best hyper_parameter
     if only_best:
-        best_i = np.argmax(losses_te)
+        best_i = np.argmin(losses_te)
         return predictors[best_i], ws[best_i], losses_tr[best_i], losses_te[best_i], t_list[best_i], m_list[best_i]
     return predictors, ws, losses_tr, losses_te, t_list, m_list

@@ -82,6 +82,12 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
 def id(x,*args):
     return x
 
+def feature_transform(x, func, features, *args):
+    tx = np.copy(x)
+    for feature in features:
+        tx[:,feature] = func(tx[:,feature], *args)
+    return tx
+
 def build_poly(x, degree, *args):
     """polynomial basis functions for input data x, for j=0 up to j=degree.
     Return the augmented basis matrix tx."""
