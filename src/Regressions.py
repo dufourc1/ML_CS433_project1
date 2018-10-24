@@ -94,6 +94,29 @@ def ridge_regression(y, tx, lambda_, loss='mse', kind='cont'):
     w = np.linalg.solve(a,tx.T.dot(y))
     return w, calculate_loss(y, tx, w, loss, kind)
 
+
+#*************************************************
+# Logistic regression
+#-------------------------------------------------
+
+
+def sigmoid(z):
+    return np.exp(z)/(1+np.exp(z))
+
+def Logistic_regression(y,x,w0,gamma = 0.1, lambda_ = 0):
+    '''
+    compute the logistic regression on the data x,y, return the probability to be 1 in the classification problem (0,1)
+    y_proba1 = Logistic_regression(...)
+
+
+    Have to add intercept to the data ! 
+    '''
+
+
+    y_proba1 = sigmoid(x.dot(w))
+
+
+
 #**************************************************
 # GENERAL REGRESSION FUNCTION
 #--------------------------------------------------
@@ -144,14 +167,17 @@ def CV(y,x,k_fold,model, *args_model):
         x_tr = x[k_complement]
         y_tr = y[k_complement]
 
-        prediction = model(x_te,y_tr,x_tr,*args_model)
-        errors.append(np.mean(abs(y_te-prediction)))
+        y_pred = model(x_te,y_tr,x_tr,*args_model)
+        y_pred = categories(y_pred)
+        errors.append(np.mean(abs(y_te-y_pred)))
 
     estimate = np.mean(errors)
 
     return estimate
 
-def single_cross_validation(y, x, k_indices, k, method='least_squares', degree=0, hyper_parameters=None, loss='mse', kind='cont'):
+
+
+def single_cross_validation(y, x, k_indices, k, method='least_squares', hyper_parameters=None, loss='mse', kind='cont'):
     """
     return the loss of any regression.
 
@@ -167,10 +193,6 @@ def single_cross_validation(y, x, k_indices, k, method='least_squares', degree=0
     x_tr = x[k_complement]
     y_tr = y[k_complement]
 
-    if degree>0 :
-        # form data with polynomial degree
-        x_te = build_poly(x_te, degree)
-        x_tr = build_poly(x_tr, degree)
 
     # regression using the method given
     w, single_loss_tr = regression(y_tr, x_tr, method, hyper_parameters, loss, kind)
@@ -179,7 +201,7 @@ def single_cross_validation(y, x, k_indices, k, method='least_squares', degree=0
     single_loss_te = calculate_loss(y_te, x_te, w, loss, kind)
     return w, single_loss_tr, single_loss_te
 
-def cross_validation(y, x, k_fold, method='least_squares', degree=0, parameters=None, seed=1, loss='mse', kind='cont', only_best=True, comparison = False):
+def cross_validation(y, x, k_fold, method='least_squares', degree=0, parameters=None, seed=1, loss='mse', kind='cont', only_best=True):
     '''
         Run ridge regression cross validation for parameters lambda in lambda.
         You can choose the loss you get and the kind of target.
@@ -221,7 +243,5 @@ def cross_validation(y, x, k_fold, method='least_squares', degree=0, parameters=
         best_i = np.argmax(loss_te)
         return w[best_i], loss_tr[best_i], loss_te[best_i], hyper_parameters[best_i]
 
-    elif comparison:
-        return np.mean(loss_te)
 
     return w, loss_tr, loss_te

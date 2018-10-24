@@ -180,26 +180,25 @@ def split_num_jet(data,y):
     data_set for the regression even smaller
     '''
 
-    data = data.copy()
-    y = y.copy()
+    data_cat = data.copy()
+    y_cat = y.copy()
 
     try :
-        num_jet = data[:,22]
+        num_jet = data_cat[:,22]
     except :
-        num_jet = data[22]
-
-
+        num_jet = data_cat[22]
+    
     #split the data depending on the value of num_jet
-    data_n2 = np.vstack((data[num_jet == 2], data[num_jet == 3]))
+    data_n2 = np.vstack((data_cat[num_jet == 2], data_cat[num_jet == 3]))
     #have to change the dimension otherwise it won't stack them properly
-    y2a = y[num_jet == 2].reshape(len(np.where(num_jet== 2)[0]),1)
-    y2b = y[num_jet == 3].reshape(len(np.where(num_jet== 3)[0]),1)
+    y2a = y_cat[num_jet == 2].reshape(len(np.where(num_jet== 2)[0]),1)
+    y2b = y_cat[num_jet == 3].reshape(len(np.where(num_jet== 3)[0]),1)
     y2 = np.vstack((y2a,y2b))
 
-    data_n0 = data[num_jet == 0]
-    y0 = y[num_jet == 0]
-    data_n1 = data[num_jet == 1]
-    y1 = y[num_jet == 1]
+    data_n0 = data_cat[num_jet == 0]
+    y0 = y_cat[num_jet == 0]
+    data_n1 = data_cat[num_jet == 1]
+    y1 = y_cat[num_jet == 1]
 
 
     #the only feature where there will be NA left after the next step
