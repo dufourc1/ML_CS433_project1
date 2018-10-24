@@ -121,11 +121,9 @@ def ridge_regression(y, tx, lambda_, *args, pred=True):
 def sigmoid(z):
     return np.exp(z)/(1+np.exp(z))
 
-<<<<<<< HEAD
-def Logistic_regression(y, x, w0, gamma = 0.1, lambda_ = 0):
-=======
+
 def Logistic_regression(y, x, w0, gamma = 0.1, lambda_ = 0, max_iters = 500):
->>>>>>> 12d08536e0c9ffed5059c7ca0043fc9a21db6613
+
     '''
     compute the logistic regression on the data x,y, return the probability to be 1 in the classification problem (0,1)
     y_proba1 = Logistic_regression(...)
