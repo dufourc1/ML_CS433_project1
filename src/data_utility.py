@@ -50,18 +50,6 @@ def build_k_indices(y, k_fold, seed):
                  for k in range(k_fold)]
     return np.array(k_indices)
 
-def build_poly(x, degree):
-    """polynomial basis functions for input data x, for j=0 up to j=degree.
-    Return the augmented basis matrix tx."""
-
-    n,p = x.shape
-    tx = np.zeros((n,(degree*p)+1))
-    tx[:,0] = 1
-    for feature in range(p):
-        for i in range(1,degree+1):
-            tx[:,feature*degree+i]=(x[:,feature])**i
-    return tx
-
 def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
     """
     Generate a minibatch iterator for a dataset.
@@ -86,6 +74,25 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
         end_index = min((batch_num + 1) * batch_size, data_size)
         if start_index != end_index:
             yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
+
+
+#*************************************************
+# FEATURES TRANSFORMATIONS
+#-------------------------------------------------
+def id(x,*args):
+    return x
+
+def build_poly(x, degree, *args):
+    """polynomial basis functions for input data x, for j=0 up to j=degree.
+    Return the augmented basis matrix tx."""
+
+    n,p = x.shape
+    tx = np.zeros((n,(degree*p)+1))
+    tx[:,0] = 1
+    for feature in range(p):
+        for i in range(1,degree+1):
+            tx[:,feature*degree+i]=(x[:,feature])**i
+    return tx
 
 #*************************************************
 # PLOTS FUNCTIONS
@@ -187,7 +194,7 @@ def split_num_jet(data,y):
         num_jet = data_cat[:,22]
     except :
         num_jet = data_cat[22]
-    
+
     #split the data depending on the value of num_jet
     data_n2 = np.vstack((data_cat[num_jet == 2], data_cat[num_jet == 3]))
     #have to change the dimension otherwise it won't stack them properly
