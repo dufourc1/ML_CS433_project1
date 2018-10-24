@@ -10,18 +10,23 @@ import numpy as np
 from data_utility import *
 from Regressions import *
 
-def error(y, tx, w):
+
+def error(y, tx, pred_func, w):
     '''Compute estimation error'''
-    e = y - tx.dot(w)
+    e = y - pred_func(tx, w)
     return e
 
-def category_error(y, tx, w):
-    '''Gives error for categorization (2 coategories coded as 0-1)
+def category_error(y, tx, pred_func, w):
+    '''Gives error for binary categorization (Cat. coded as 0-1)
     Input true values as y, features as tx and estimated weights as w'''
-    y_hat = categories(tx.dot(w))
+    y_hat = categories(pred_func(tx, w))
     e = np.zeros(len(y_hat))
     e[y != y_hat] = 1
     return e
+
+#**************************************
+# GLOBAL ERROR FUNCTION
+err_f = category_error
 
 def calculate_mse(e):
     """Calculate the mse for vector e."""
@@ -35,6 +40,10 @@ def calculate_mae(e):
 def calculate_rmse(e):
     """ Calculate the mse for vector e."""
     return math.sqrt(2.0*calculate_mse(e))
+
+#****************************************
+# GLOBAL LOSS FUNCTION
+loss_f = calculate_mae
 
 def calculate_loss(y, tx, w, loss, kind):
     """Calculate the loss.

@@ -11,12 +11,20 @@ from data_utility import *
 from proj1_helpers import *
 
 #*****************************************
+# PREDICTORS
+#-----------------------------------------
+
+def linear_predictor(x_te, w):
+    '''Compute predictions for x_te in a linear model with weights w.'''
+    return x_te.dot(w)
+
+#*****************************************
 # GRADIENT DESCENT METHODS
 #-----------------------------------------
 
-def least_squares_GD(y, tx, initial_w, max_iters, gamma, all_step=False, printing=False, loss='mse', kind='cont'):
+def least_squares_GD(y, tx, initial_w, gamma, max_iters=500, *args, pred=True, all_step=False, printing=False):
     """Gradient descent algorithm.
-    Return: w, loss
+    Return: [predictor,] w, loss
     ******************
     all_step    If 'True' gives all the computed parameters and respective losses. False by default.
     printing    If 'True' print the loss and first 2 parameters estimate at each step. False by defalt.
@@ -27,7 +35,7 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma, all_step=False, printin
     w = initial_w
     for n_iter in range(max_iters):
         # compute loss, gradient
-        grad, loss = compute_gradient(y, tx, w, loss, kind)
+        grad, loss = compute_gradient(y, tx, w)
         # gradient w by descent update
         w = w - gamma * grad
         # store w and loss
@@ -36,12 +44,17 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma, all_step=False, printin
         if printing:
             print("Gradient Descent({bi}/{ti}): loss={l}, w0={w0}, w1={w1}".format(
               bi=n_iter, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
+    out = []
+    if pred:
+        out.append(linear_predictor)
     if all_step:
-        return ws, losses
-    else :
-        return ws[-1], losses[-1]
+        out.append([ws, losses])
+    else:
+        out.append([ws[-1], losses[-1]])
+    return out
 
-def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma, all_step=False, printing=False, loss='mse', kind='cont'):
+
+def least_squares_SGD(y, tx, initial_w, batch_size, gamma, max_iters=500, *args, pred=True, all_step=False, printing=False):
     """Stochastic gradient descent."""
     # Define parameters to store w and loss
     ws = [initial_w]
@@ -51,49 +64,54 @@ def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma, all_step=F
     for n_iter in range(max_iters):
         for y_batch, tx_batch in batch_iter(y, tx, batch_size=batch_size, num_batches=1):
             # compute a stochastic gradient and loss
-            grad, _ = compute_gradient(y_batch, tx_batch, w, loss, kind)
+            grad, _ = compute_gradient(y_batch, tx_batch, w)
             # update w through the stochastic gradient update
             w = w - gamma * grad
             # calculate loss
-            loss = calculate_loss(y, tx, w, loss, kind)
+            loss = loss_f(err_f(y, tx, linear_predictor, w))
             # store w and loss
             ws.append(w)
             losses.append(loss)
         if printing:
             print("Gradient Descent({bi}/{ti}): loss={l}, w0={w0}, w1={w1}".format(
               bi=n_iter, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
+    out = []
+    if pred:
+        out.append(linear_predictor)
     if all_step:
-        return ws, losses
-    else :
-        return ws[-1], losses[-1]
+        out.append([ws, losses])
+    else:
+        out.append([ws[-1], losses[-1]])
+    return out
+
 
 #************************************************
 #LEAST SQUARES
 #------------------------------------------------
 
-def least_squares(y, tx, loss='mse', kind='cont'):
+def least_squares(y, tx, *args, pred=True,):
     """
     Calculate the least squares solution.
-    Returns w and mse loss.
+    Returns [predictor,] w, loss.
     """
     w = np.linalg.solve(tx.T.dot(tx),tx.T.dot(y))
-
-    return w, calculate_loss(y, tx, w, loss, kind)
-
-def least_squares_p(y, tx, parameters, loss='mse', kind='cont'): #this is used to generalize regressions
-    return least_squares(y, tx, loss, kind)
+    if pred:
+        return linear_predictor, w, loss_f(err_f(y, tx, linear_predictor, w))
+    return w, loss_f(err_f(y, tx, linear_predictor, w))
 
 #**************************************************
 # RIDGE REGRESSION
 #--------------------------------------------------
 
-def ridge_regression(y, tx, lambda_, loss='mse', kind='cont'):
+def ridge_regression(y, tx, lambda_, *args, pred=True):
     """implement ridge regression.
-    Returns w and loss loss"""
+    Returns [predictor,] w, loss.
+    """
     a = tx.T.dot(tx) + 2*tx.shape[0]*lambda_*np.identity(tx.shape[1])
     w = np.linalg.solve(a,tx.T.dot(y))
-    return w, calculate_loss(y, tx, w, loss, kind)
-
+    if pred:
+        return linear_predictor, w, loss_f(err_f(y, tx, linear_predictor, w))
+    return w, loss_f(err_f(y, tx, linear_predictor, w))
 
 #*************************************************
 # Logistic regression
@@ -103,7 +121,11 @@ def ridge_regression(y, tx, lambda_, loss='mse', kind='cont'):
 def sigmoid(z):
     return np.exp(z)/(1+np.exp(z))
 
+<<<<<<< HEAD
+def Logistic_regression(y, x, w0, gamma = 0.1, lambda_ = 0):
+=======
 def Logistic_regression(y, x, w0, gamma = 0.1, lambda_ = 0, max_iters = 500):
+>>>>>>> 12d08536e0c9ffed5059c7ca0043fc9a21db6613
     '''
     compute the logistic regression on the data x,y, return the probability to be 1 in the classification problem (0,1)
     y_proba1 = Logistic_regression(...)
@@ -153,46 +175,11 @@ def regression(y, tx, method, parameters=None, loss='mse', kind='cont'):
 # CROSS VALIDATION
 #--------------------------------------------------
 
-
-
-def CV(y,x,k_fold,model, *args_model):
-    '''
-    return an estimate of the expected predicted error outside of the train set for the model, using k fold cross validation
-    *args_model are the parameter needed for the model to train (for example lambda for ridge,..,)
-
-    estimate = CV(y,x,k_fold,model, *args_model)
-
-
-    prediction = model(x_test,y_train,x_train,*args_model): model is a function that return the prediction classification for a specific model
-    '''
-
-    k_indices = build_k_indices(y, k_fold, seed = 1)
-    errors = []
-
-    for k in range(k_fold):
-        #repartition of the different folds to either train or test
-        x_te = x[k_indices[k]]
-        y_te = y[k_indices[k]]
-        k_complement = np.ravel(np.vstack([k_indices[:k],k_indices[k+1:]]))
-        x_tr = x[k_complement]
-        y_tr = y[k_complement]
-
-        y_pred = model(x_te,y_tr,x_tr,*args_model)
-        y_pred = categories(y_pred)
-        errors.append(np.mean(abs(y_te-y_pred)))
-
-    estimate = np.mean(errors)
-
-    return estimate
-
-
-
-def single_cross_validation(y, x, k_indices, k, method='least_squares', hyper_parameters=None, loss='mse', kind='cont'):
+def single_validation(y, x, k_indices, k, method, *args_method):
     """
-    return the loss of any regression.
+    Train given model on all subset of k_indices but k-th and compute prediction error over k-th subset of k_indices.
 
-    For informations on methods and parameters and errors see respectively regression() and compute_loss().
-    ATTENTION: as of this implementation, the error for test set is considered as if the estimation is CATEGORICAL
+    Returns predictor, w, single_loss_tr, single_loss_te
 
     """
 
@@ -205,53 +192,73 @@ def single_cross_validation(y, x, k_indices, k, method='least_squares', hyper_pa
 
 
     # regression using the method given
-    w, single_loss_tr = regression(y_tr, x_tr, method, hyper_parameters, loss, kind)
+    predictor, w, single_loss_tr = method(y_tr, x_tr, *args_method)
 
     # calculate the loss for test data
-    single_loss_te = calculate_loss(y_te, x_te, w, loss, kind)
-    return w, single_loss_tr, single_loss_te
+    single_loss_te = loss_f(err_f(y_te, x_te, predictor, w))
+    return predictor, w, single_loss_tr, single_loss_te
 
-def cross_validation(y, x, k_fold, method='least_squares', degree=0, parameters=None, seed=1, loss='mse', kind='cont', only_best=True):
+def cross_validation(y, tx, k_fold, method, *args_method, k_indices=None, seed=1):
     '''
-        Run ridge regression cross validation for parameters lambda in lambda.
-        You can choose the loss you get and the kind of target.
+    return an estimate of the expected predicted error outside of the train set for the model, using k fold cross validation
+    *args_model are the parameter needed for the model to train (for example lambda for ridge,..,)
 
-        ATTENTION: degree is gonna be incorporated in parameters in later implementation.
+    estimate = CV(y, tx, k_fold[, k_indices, loss_f, err_f,], model, *args_model)
+
+
+    prediction = model(x_test,y_train,x_train,*args_model): model is a function that return the prediction classification for a specific model
     '''
-    if parameters is None:
-        hyper_parameters = None
-    else:
-        hyper_parameters = parameters.get('hyper_parameters', None)
+
+    if k_indices is None:
+        k_indices = build_k_indices(y, k_fold, seed = seed)
+
+    single_loss_tr = np.zeros(k_fold)
+    single_loss_te = np.zeros(k_fold)
+    w_l = np.zeros((tx.shape[1],k_fold))
+    predictor = None
+    for k in range(k_fold):
+        predictor, w_l[:,k], single_loss_tr[k], single_loss_te[k] = single_validation(y, tx, k_indices, k, method, *args_method)
+    loss_tr = np.mean(single_loss_tr)
+    loss_te = np.mean(single_loss_te)
+    w = np.mean(w_l, axis=1)
+
+    return predictor, w, loss_tr, loss_te
+
+
+def multi_cross_validation(y, x, k_fold, transformations=[[id, []]], methods=[[least_squares, []]], seed=1, only_best=True):
+    '''
+        Run cross validation for whatever you can think of.
+
+        Return predictors, ws, losses_tr, losses_te, t_list, m_list. (Only best value if only_best=True)
+    '''
     # split data in k fold
     k_indices = build_k_indices(y, k_fold, seed)
     # define lists to store the loss of training data and test data
-    loss_tr = []
-    loss_te = []
-    w = []
+    # ATTENTION: not sure if good idea to store everything.
+    predictors = []
+    ws = []
+    losses_tr = []
+    losses_te = []
+    t_list = []
+    m_list = []
 
-    if degree>0 :
-        # form data with polynomial degree
-        tx = build_poly(x, degree)
-        degree = 0
+    for t, t_arg in transformations:
+        tx = t(x, t_arg)
+        for method, parameters in methods:
+            for m_arg in parameters:
+                predictor, w, loss_tr, loss_te = cross_validation(y, tx, k_fold, method, m_arg, k_indices)
+                predictors.append(predictor)
+                ws.append(w)
+                losses_tr.append(loss_tr)
+                losses_te.append(loss_te)
+                t_list.append([t, t_arg])
+                m_list.append([method, m_arg])
 
 
-    # cross validation
-    for hyper_parameter in hyper_parameters:
-        single_loss_tr = np.zeros(k_fold)
-        single_loss_te = np.zeros(k_fold)
-        w_l = np.zeros((tx.shape[1],k_fold))
-        for k in range(k_fold):
-            w_l[:,k], single_loss_tr[k], single_loss_te[k] = single_cross_validation(y, tx, k_indices, k, method, degree, hyper_parameter, loss=loss, kind=kind)
-        loss_tr.append(np.mean(single_loss_tr))
-        loss_te.append(np.mean(single_loss_te))
-        w.append(np.mean(w_l, axis=1))
-
-    cross_validation_visualization(hyper_parameters, loss_tr, loss_te)
+    cross_validation_visualization(range(len(predictors)), losses_tr, losses_te)
 
     #Routine to gest just best hyper_parameter
     if only_best:
-        best_i = np.argmax(loss_te)
-        return w[best_i], loss_tr[best_i], loss_te[best_i], hyper_parameters[best_i]
-
-
-    return w, loss_tr, loss_te
+        best_i = np.argmax(losses_te)
+        return predictors[best_i], ws[best_i], losses_tr[best_i], losses_te[best_i], t_list[best_i], m_list[best_i]
+    return predictors, ws, losses_tr, losses_te, t_list, m_list
