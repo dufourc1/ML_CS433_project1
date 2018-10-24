@@ -138,7 +138,7 @@ def single_cross_validation(y, x, k_indices, k, method='least_squares', degree=0
         x_te = build_poly(x_te, degree)
         x_tr = build_poly(x_tr, degree)
 
-    # ridge regression
+    # regression using the method given
     w, single_loss_tr = regression(y_tr, x_tr, method, hyper_parameters, loss, kind)
 
     # calculate the loss for test data
