@@ -120,13 +120,47 @@ def regression(y, tx, method, parameters=None, loss='mse', kind='cont'):
 # CROSS VALIDATION
 #--------------------------------------------------
 
+
+
+def CV(y,x,k_fold,model, *args_model):
+    '''
+    return an estimate of the expected predicted error outside of the train set for the model, using k fold cross validation
+    *args_model are the parameter needed for the model to train (for example lambda for ridge,..,)
+
+    estimate = CV(y,x,k_fold,model, *args_model)
+
+
+    prediction = model(x_test,y_train,x_train,*args_model): model is a function that return the prediction classification for a specific model
+    '''
+
+    k_indices = build_k_indices(y, k_fold, seed = 1)
+    errors = []
+
+    for k in range(k_fold):
+        #repartition of the different folds to either train or test
+        x_te = x[k_indices[k]]
+        y_te = y[k_indices[k]]
+        k_complement = np.ravel(np.vstack([k_indices[:k],k_indices[k+1:]]))
+        x_tr = x[k_complement]
+        y_tr = y[k_complement]
+
+        prediction = model(x_te,y_tr,x_tr,*args_model)
+        errors.append(np.mean(abs(y_te-prediction)))
+
+    estimate = np.mean(errors)
+
+    return estimate
+
 def single_cross_validation(y, x, k_indices, k, method='least_squares', degree=0, hyper_parameters=None, loss='mse', kind='cont'):
-    """return the loss of any regression.
+    """
+    return the loss of any regression.
+
     For informations on methods and parameters and errors see respectively regression() and compute_loss().
-    ATTENTION: as of this implementation, the error for test set is considered as if the estimation is CATEGORICAL"""
+    ATTENTION: as of this implementation, the error for test set is considered as if the estimation is CATEGORICAL
+
+    """
 
     # get k'th subgroup in test, others in train
-    x_te = x[k_indices[k]]
     x_te = x[k_indices[k]]
     y_te = y[k_indices[k]]
     k_complement = np.ravel(np.vstack([k_indices[:k],k_indices[k+1:]]))
@@ -187,7 +221,7 @@ def cross_validation(y, x, k_fold, method='least_squares', degree=0, parameters=
         best_i = np.argmax(loss_te)
         return w[best_i], loss_tr[best_i], loss_te[best_i], hyper_parameters[best_i]
 
-    elif comparison: 
+    elif comparison:
         return np.mean(loss_te)
 
     return w, loss_tr, loss_te
