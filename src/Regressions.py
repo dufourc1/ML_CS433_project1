@@ -109,7 +109,7 @@ def Logistic_regression(y,x,w0,gamma = 0.1, lambda_ = 0):
     y_proba1 = Logistic_regression(...)
 
 
-    Have to add intercept to the data ! 
+    Have to add intercept to the data ! t
     '''
 
 
