@@ -69,7 +69,17 @@ def calculate_loss(y, tx, w, loss, kind):
 
 
 def compute_gradient(y, tx, w, loss='mse', kind='cont'):
-    """Compute the gradient of mse."""
-    err = calculate_loss(y, tx, w, loss, kind)
-    grad = -tx.T.dot(err) / len(err)
-    return grad, err
+
+    if loss == "mse":
+        """Compute the gradient of mse."""
+        err = calculate_loss(y, tx, w, loss, kind)
+        grad = -tx.T.dot(err) / len(err)
+        return grad, err
+
+    elif loss == "logistic":
+        '''compute the gradient for the logistic regression'''
+        grad = tx.T.dot(sigmoid(tx.dot(w))-y)
+        err = calculate_mse(sigmoid(tx.dot(w))-y)
+        return grad, err
+    else:
+        raise(NotImplementedError)
