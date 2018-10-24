@@ -8,6 +8,7 @@ Contains:
 import math
 import numpy as np
 from data_utility import *
+from Regressions import *
 
 def error(y, tx, w):
     '''Compute estimation error'''

@@ -121,7 +121,6 @@ def Logistic_regression(y, x, w0, gamma = 0.1, lambda_ = 0, max_iters = 500):
 
     return w
 
-    
 def pred_logitstic(x,w):
 
     return sigmoid(x.dot(w))
