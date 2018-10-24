@@ -20,7 +20,7 @@ def category_error(y, tx, pred_func, w):
     '''Gives error for binary categorization (Cat. coded as 0-1)
     Input true values as y, features as tx and estimated weights as w'''
     y_hat = categories(pred_func(tx, w))
-    e = np.zeros(len(y_hat))
+    e = np.zeros((len(y_hat),1))
     e[y != y_hat] = 1
     return e
 
@@ -66,7 +66,7 @@ def calculate_loss(y, tx, w, loss, kind):
     loss_func = loss_switcher.get(loss, calculate_mse)
     err_func = err_switcher.get(kind, error)
 
-    return loss_func(err_func(y, tx, w))
+    return loss_func(err_func(y, tx, w)) ####is this a mistake, should it be err_f ? I'm a bit lost
 
 
 def compute_gradient(y, tx, w, loss='mse', kind='cont'):
@@ -79,8 +79,11 @@ def compute_gradient(y, tx, w, loss='mse', kind='cont'):
 
     elif loss == "logistic":
         '''compute the gradient for the logistic regression'''
+        w = w.reshape(len(w),1)
+        y = y.reshape(len(y),1)
         grad = tx.T.dot(sigmoid(tx.dot(w))-y)
         err = calculate_mse(sigmoid(tx.dot(w))-y)
+        print(err)
         return grad, err
     else:
         raise(NotImplementedError)

@@ -122,27 +122,46 @@ def sigmoid(z):
     return np.exp(z)/(1+np.exp(z))
 
 
-def Logistic_regression(y, x, w0, gamma = 0.1, lambda_ = 0, max_iters = 500):
+def Logistic_regression(y, x, w, gamma = 0.1, lambda_ = 0, max_iters = 500, printing = True, batch_size = 100):
 
     '''
     compute the logistic regression on the data x,y, return the probability to be 1 in the classification problem (0,1)
     y_proba1 = Logistic_regression(...)
 
 
-    Have to add intercept to the data ! t
+    Have to add intercept to the data !
     '''
-    w = w0
-    for i in range(max_iters):
-        w_old = w
-        grad,err = compute_gradient(y,x,w,loss = "logistic")
-        w = w -gamma*grad
-        if max(abs(w_old-w)):
-            break
+    ws = []
+    losses = []
 
-    return w
+    for n_iter in range(max_iters):
+        for y_batch, tx_batch in batch_iter(y, x, batch_size=batch_size, num_batches=1):
+            # compute a stochastic gradient and loss
+            grad,loss = compute_gradient(y_batch, tx_batch, w, loss = "logistic")
+            # update w through the stochastic gradient update
+            print("w avant le calcul du gradient ",w.shape)
+            print("gradient ",grad.shape)
+            print("gamma*gran", (gamma*grad).shape)
+
+            w = w - gamma * grad
+            print(w.shape)
+            # calculate loss
+            loss = y_batch - pred_logitstic(tx_batch,w)
+            # store w and loss
+            print("w: ",w.shape)
+            ws.append(w)
+        if printing:
+            print("Gradient Descent({bi}/{ti}):loss = {l} w={w}".format(
+              bi=n_iter, ti=max_iters - 1, l = loss, w = w))
+    #return out
+
+
 
 def pred_logitstic(x,w):
-
+    w = w.reshape(len(w),1)
+    print("logistic predictionS")
+    print((x.dot(w)).shape)
+    print(sigmoid(x.dot(w)).shape)
     return sigmoid(x.dot(w))
 
 
