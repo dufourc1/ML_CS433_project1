@@ -290,7 +290,7 @@ def multi_cross_validation(y, x, k_fold, transformations=[[id, []]], methods=[[l
         tx = t(x, *t_arg)
         for method, parameters in methods:
             for m_arg in parameters:
-                predictor, w, loss_tr, loss_te = cross_validation(y, tx, k_fold, method, m_arg, k_indices)
+                predictor, w, loss_tr, loss_te = cross_validation(y, tx, k_fold, method, m_arg, k_indices = k_indices)
                 predictors.append(predictor)
                 ws.append(w)
                 losses_tr.append(loss_tr)
