@@ -121,12 +121,12 @@ def scatter(x, which, other_f =False, against=None):
         print("Scatter plot for {i}th feature :".format(i=i))
         plt.show()
 
-def cross_validation_visualization(lambds, mse_tr, mse_te):
+def cross_validation_visualization(steps, mse_tr, mse_te):
     """visualization the curves of mse_tr and mse_te."""
-    plt.semilogx(lambds, mse_tr, marker=".", color='b', label='train error')
-    plt.semilogx(lambds, mse_te, marker=".", color='r', label='test error')
-    plt.xlabel("lambda")
-    plt.ylabel("rmse")
+    plt.plot(steps, mse_tr, marker=".", color='b', label='train error')
+    plt.plot(steps, mse_te, marker=".", color='r', label='test error')
+    plt.xlabel("CV step")
+    plt.ylabel("loss")
     plt.title("cross validation")
     plt.legend(loc=2)
     plt.grid(True)
