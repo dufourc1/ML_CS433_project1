@@ -180,7 +180,8 @@ def imputation(data, method = "mean",features_treated = "all" ):
 
 def preliminary_treatment_X(X, keepers=np.ones(30,dtype=bool), imp_method="mean") :
     jet_num = X[:,22]
-    null_v = np.zeros((len(jet_num),1))
+    n = len(jet_num)
+    null_v = np.zeros((n,1))
     jet_0 = np.copy(null_v)
     jet_1 = np.copy(null_v)
     jet_2 = np.copy(null_v)
@@ -190,9 +191,10 @@ def preliminary_treatment_X(X, keepers=np.ones(30,dtype=bool), imp_method="mean"
     jet_1[jet_num==1] = 1
     jet_2[jet_num==2] = 1
     jet_3[jet_num==3] = 1
+    intercept = np.ones((n,1))
 
     x = standardize_data(imputation(X[:,keepers], imp_method))
-    return np.hstack((x, jet_0,jet_1,jet_2,jet_3))
+    return np.hstack((intercept, x, jet_0,jet_1,jet_2,jet_3))
 
 
 #************************************************
