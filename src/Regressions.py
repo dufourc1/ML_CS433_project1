@@ -122,44 +122,41 @@ def sigmoid(z):
     return np.exp(z)/(1+np.exp(z))
 
 
-def Logistic_regression(y, x, w, gamma = 0.000005, lambda_ = 0, max_iters = 100, printing = False, batch_size = 300, pred = False):
+def logistic_regression(y, x, w, max_iters = 100, gamma = 0.000005, printing = False, pred = False):
 
     '''
-    compute the logistic regression on the data x,y, return the probability to be 1 in the classification problem (0,1)
+    compute the logistic regression on the data x,y, return the probability to be 1 in the classification problem (0,1), using gradient descent
     y_proba1 = Logistic_regression(...)
-
-
     Have to add intercept to the data !
     '''
-    ws = []
-    losses = []
 
     for n_iter in range(max_iters):
         grad,loss = compute_gradient(y, x, w, loss = "logistic")
-        # update w through the stochastic gradient update
         w_old = w
+        # update w with gradient update
         w = w - gamma * grad
         # calculate loss
         y = y.reshape(len(y),1)
-        try:
-            loss = np.mean(abs(y - categories(pred_logistic(x,w))))
-        except :
-            loss = "not computed, memory error"
-        # store w and loss
-        ws.append(w)
+        loss = np.mean(abs(y - categories(pred_logistic(x,w))))
+
+
         if printing:
             print("Gradient Descent({bi}/{ti}):loss = {l}".format(
               bi=n_iter, ti=max_iters - 1, l = loss))
 
+        #convergence criterion
         if max(abs(w_old-w))/(1+max(abs(w_old))) < 10**-3:
-            print("FINISHED ! IT CONVERGED")
             break
-    predictor = "don't know"
+
     w = w.reshape(len(w))
     if pred:
         return pred_logistic, w, loss
     else :
         return w, loss
+
+
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
+
 
 
 
