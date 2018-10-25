@@ -23,7 +23,7 @@ def category_error(y, tx, pred_func, w):
     '''Gives error for binary categorization (Cat. coded as 0-1)
     Input true values as y, features as tx and estimated weights as w'''
     y_hat = categories(pred_func(tx, w))
-    e = np.zeros((len(y_hat),1))
+    e = np.zeros((len(y_hat),1)) 
     e[y != y_hat] = 1
     return e
 
