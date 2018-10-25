@@ -22,7 +22,7 @@ def linear_predictor(x_te, w):
 # GRADIENT DESCENT METHODS
 #-----------------------------------------
 
-def least_squares_GD(y, tx, initial_w, gamma, max_iters=500, *args, pred=True, all_step=False, printing=False):
+def least_squares_GD(y, tx, initial_w, gamma, max_iters=500, *args, pred=False, all_step=False, printing=False):
     """Gradient descent algorithm.
     Return: [predictor,] w, loss
     ******************
@@ -54,7 +54,7 @@ def least_squares_GD(y, tx, initial_w, gamma, max_iters=500, *args, pred=True, a
     return out
 
 
-def least_squares_SGD(y, tx, initial_w, batch_size, gamma, max_iters=500, *args, pred=True, all_step=False, printing=False):
+def least_squares_SGD(y, tx, initial_w, batch_size, gamma, max_iters=500, *args, pred=False, all_step=False, printing=False):
     """Stochastic gradient descent."""
     # Define parameters to store w and loss
     ws = [initial_w]
@@ -89,7 +89,7 @@ def least_squares_SGD(y, tx, initial_w, batch_size, gamma, max_iters=500, *args,
 #LEAST SQUARES
 #------------------------------------------------
 
-def least_squares(y, tx, *args, pred=True,):
+def least_squares(y, tx, *args, pred=False,):
     """
     Calculate the least squares solution.
     Returns [predictor,] w, loss.
@@ -103,7 +103,7 @@ def least_squares(y, tx, *args, pred=True,):
 # RIDGE REGRESSION
 #--------------------------------------------------
 
-def ridge_regression(y, tx, lambda_, *args, pred=True):
+def ridge_regression(y, tx, lambda_, *args, pred=False):
     """implement ridge regression.
     Returns [predictor,] w, loss.
     """
@@ -210,7 +210,7 @@ def single_validation(y, x, k_indices, k, method, *args_method):
 
 
     # regression using the method given
-    predictor, w, single_loss_tr = method(y_tr, x_tr, *args_method)
+    predictor, w, single_loss_tr = method(y_tr, x_tr, *args_method, pred=True)
 
     # calculate the loss for test data
     single_loss_te = loss_f(err_f(y_te, x_te, predictor, w))
