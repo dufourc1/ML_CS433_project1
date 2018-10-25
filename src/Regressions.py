@@ -190,6 +190,8 @@ def reg_logistic_regression(y, x, lambda_, initial_w, max_iters = 100, gamma =0.
     else :
         return w, loss
 
+    a = 1
+
 
 
 
