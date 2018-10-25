@@ -154,23 +154,25 @@ def imputation(data, method = "mean",features_treated = [1,19,20,21] ):
     '''
 
     if features_treated == "all":
-        features_treated = np.arange(0, data.shape[1], 1)
+        features_treated = range(data.shape[1])
 
     data_imputed = data.copy()
 
     if method == "mean":
         for i in features_treated:
-            t = data[:,i]
+            t = data_imputed[:,i]
             mean = np.mean(t[t != -999])
-            data_imputed[data_imputed == -999] = mean
+            t[t == -999] = mean
+            data_imputed[:,i] = t
 
         return data_imputed
 
     if method == "median":
         for i in features_treated:
-            t = data[:,i]
+            t = data_imputed[:,i]
             median = np.median(t[t != -999])
-            data_imputed[data_imputed == -999] = median
+            t[t == -999] = median
+            data_imputed[:,i] = t
 
         return data_imputed
 
