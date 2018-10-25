@@ -122,7 +122,7 @@ def sigmoid(z):
     return np.exp(z)/(1+np.exp(z))
 
 
-def Logistic_regression(y, x, w, gamma = 0.1, lambda_ = 0, max_iters = 500, printing = False, batch_size = 300, pred = False):
+def Logistic_regression(y, x, w, gamma = 0.000005, lambda_ = 0, max_iters = 100, printing = False, batch_size = 300, pred = False):
 
     '''
     compute the logistic regression on the data x,y, return the probability to be 1 in the classification problem (0,1)
@@ -135,17 +135,18 @@ def Logistic_regression(y, x, w, gamma = 0.1, lambda_ = 0, max_iters = 500, prin
     losses = []
 
     for n_iter in range(max_iters):
-        for y_batch, tx_batch in batch_iter(y, x, batch_size=batch_size, num_batches=1):
-            # compute a stochastic gradient and loss
-            grad,loss = compute_gradient(y_batch, tx_batch, w, loss = "logistic")
-            # update w through the stochastic gradient update
-            w_old = w
-            w = w - gamma * grad
-            # calculate loss
-            y_batch = y_batch.reshape(len(y_batch),1)
-            loss = calculate_mae(y_batch - categories(pred_logitstic(tx_batch,w)))
-            # store w and loss
-            ws.append(w)
+        grad,loss = compute_gradient(y, x, w, loss = "logistic")
+        # update w through the stochastic gradient update
+        w_old = w
+        w = w - gamma * grad
+        # calculate loss
+        y = y.reshape(len(y),1)
+        try:
+            loss = np.mean(abs(y - categories(pred_logistic(x,w))))
+        except :
+            loss = "not computed, memory error"
+        # store w and loss
+        ws.append(w)
         if printing:
             print("Gradient Descent({bi}/{ti}):loss = {l}".format(
               bi=n_iter, ti=max_iters - 1, l = loss))
@@ -154,16 +155,19 @@ def Logistic_regression(y, x, w, gamma = 0.1, lambda_ = 0, max_iters = 500, prin
             print("FINISHED ! IT CONVERGED")
             break
     predictor = "don't know"
+    w = w.reshape(len(w))
     if pred:
-        return pred_logitstic, w, loss
+        return pred_logistic, w, loss
     else :
         return w, loss
 
 
 
-def pred_logitstic(x,w):
-    w = w.reshape(len(w),1)
-    return sigmoid(x.dot(w))
+def pred_logistic(x,w):
+    #w = w.reshape(len(w),1)
+    y_hat = sigmoid(x.dot(w))
+    #y_hat = y_hat.reshape(len(y_hat))
+    return y_hat
 
 
 
@@ -207,7 +211,6 @@ def single_validation(y, x, k_indices, k, method, *args_method):
     k_complement = np.ravel(np.vstack([k_indices[:k],k_indices[k+1:]]))
     x_tr = x[k_complement]
     y_tr = y[k_complement]
-
 
     # regression using the method given
     predictor, w, single_loss_tr = method(y_tr, x_tr, *args_method, pred=True)
