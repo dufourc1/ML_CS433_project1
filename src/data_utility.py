@@ -87,9 +87,9 @@ def log_plus(feature, n=1, *args):
 
 def feature_multitransform(x, functions, *args):
     tx = np.copy(x)
-    for func, features in functions:
+    for func, features, *arg in functions:
         for feature in features:
-            tx[:,feature] = func(tx[:,feature], *args)
+            tx[:,feature] = func(tx[:,feature], *arg)
     return tx
 
 def feature_transform(x, func, features, *args):

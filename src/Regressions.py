@@ -157,6 +157,8 @@ def logistic_regression(y, x, w, max_iters = 100, gamma = 0.000005, printing = F
 
 def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
 
+    a = 1
+
 
 
 
