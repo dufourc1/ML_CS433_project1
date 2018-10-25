@@ -155,12 +155,14 @@ def logistic_regression(y, x, w, max_iters = 100, gamma = 0.000005, printing = F
         return w, loss
 
 
-def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters = 100, gamma =0.000005 , printing = False, pred = False):
+def reg_logistic_regression(y, x, lambda_, initial_w, max_iters = 100, gamma =0.000005 , printing = False, pred = False):
 
     '''
     compute the reguralized logistic regression using gradient descent
     w,loss = reg_logistic_regression(..)
     '''
+
+    w = initial_w
 
     for n_iter in range(max_iters):
         grad,loss = compute_gradient(y, x, w, loss = "logistic")
@@ -194,7 +196,7 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters = 100, gamma =0
 def pred_logistic(x,w):
 
     '''
-    predict the probability of being 1 of the logistic regression 
+    predict the probability of being 1 of the logistic regression
     '''
     y_hat = sigmoid(x.dot(w))
     return y_hat
