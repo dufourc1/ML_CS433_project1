@@ -11,6 +11,9 @@ from data_utility import *
 from Regressions import *
 
 
+def sigmoid(z):
+    return np.exp(z)/(1+np.exp(z))
+
 def error(y, tx, pred_func, w):
     '''Compute estimation error'''
     e = y - pred_func(tx, w)

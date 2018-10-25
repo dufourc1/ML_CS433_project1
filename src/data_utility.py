@@ -215,9 +215,9 @@ def split_num_jet(data,y):
 
 
     #the only feature where there will be NA left after the next step
-    data_n0 = inputation(data_n0,features_treated = [0])
-    data_n1 = inputation(data_n1,features_treated = [0])
-    data_n2 = inputation(data_n2,features_treated = [0])
+    data_n0 = imputation(data_n0,features_treated = [0])
+    data_n1 = imputation(data_n1,features_treated = [0])
+    data_n2 = imputation(data_n2,features_treated = [0])
 
     #delete the features with 100% of NA depending on the value if num_jet, plud deletion of the feature num_jet
     data_n0_modified = np.delete(data_n0,[4,6,12,23,24,25,26,27,28,22],1)
