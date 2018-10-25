@@ -126,7 +126,7 @@ def logistic_regression(y, x, w, max_iters = 100, gamma = 0.000005, printing = F
 
     '''
     compute the logistic regression on the data x,y, return the probability to be 1 in the classification problem (0,1), using gradient descent
-    w,loss = Logistic_regression(...)
+    y_proba1 = Logistic_regression(...)
     Have to add intercept to the data !
     '''
 
@@ -144,9 +144,9 @@ def logistic_regression(y, x, w, max_iters = 100, gamma = 0.000005, printing = F
             print("Gradient Descent({bi}/{ti}):loss = {l}".format(
               bi=n_iter, ti=max_iters - 1, l = loss))
 
-        #convergence criterion
-        if max(abs(w_old-w))/(1+max(abs(w_old))) < 10**-3:
-            break
+        # #convergence criterion
+        # if max(abs(w_old-w))/(1+max(abs(w_old))) < 10**-3:
+        #     break
 
     w = w.reshape(len(w))
     if pred:
@@ -155,40 +155,7 @@ def logistic_regression(y, x, w, max_iters = 100, gamma = 0.000005, printing = F
         return w, loss
 
 
-def reg_logistic_regression(y, x, lambda_, initial_w, max_iters = 100, gamma =0.000005 , printing = False, pred = False):
-
-    '''
-    compute the reguralized logistic regression using gradient descent
-    w,loss = reg_logistic_regression(..)
-    '''
-
-    w = initial_w
-
-    for n_iter in range(max_iters):
-        grad,loss = compute_gradient(y, x, w, loss = "logistic")
-        #add the constrained part
-        grad += lambda_*w/2.
-        w_old = w
-        # update w with gradient update
-        w = w - gamma * grad
-        # calculate loss
-        y = y.reshape(len(y),1)
-        loss = np.mean(abs(y - categories(pred_logistic(x,w))))
-
-
-        if printing:
-            print("Gradient Descent({bi}/{ti}):loss = {l}".format(
-              bi=n_iter, ti=max_iters - 1, l = loss))
-
-        #convergence criterion
-        if max(abs(w_old-w))/(1+max(abs(w_old))) < 10**-3:
-            break
-
-    w = w.reshape(len(w))
-    if pred:
-        return pred_logistic, w, loss
-    else :
-        return w, loss
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
 
     a = 1
 
@@ -196,11 +163,9 @@ def reg_logistic_regression(y, x, lambda_, initial_w, max_iters = 100, gamma =0.
 
 
 def pred_logistic(x,w):
-
-    '''
-    predict the probability of being 1 of the logistic regression
-    '''
+    #w = w.reshape(len(w),1)
     y_hat = sigmoid(x.dot(w))
+    #y_hat = y_hat.reshape(len(y_hat))
     return y_hat
 
 
