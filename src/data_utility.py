@@ -82,6 +82,10 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
 def id(x,*args):
     return x
 
+def log_plus(feature, *args):
+    ones = np.ones(len(feature))
+    return np.log(feature + ones)
+
 def feature_transform(x, func, features, *args):
     tx = np.copy(x)
     for feature in features:
