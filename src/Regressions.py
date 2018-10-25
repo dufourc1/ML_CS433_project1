@@ -122,7 +122,7 @@ def sigmoid(z):
     return np.exp(z)/(1+np.exp(z))
 
 
-def Logistic_regression(y, x, w, gamma = 0.1, lambda_ = 0, max_iters = 500, printing = True, batch_size = 100, pred = False):
+def Logistic_regression(y, x, w, gamma = 0.1, lambda_ = 0, max_iters = 500, printing = False, batch_size = 300, pred = False):
 
     '''
     compute the logistic regression on the data x,y, return the probability to be 1 in the classification problem (0,1)
@@ -150,7 +150,7 @@ def Logistic_regression(y, x, w, gamma = 0.1, lambda_ = 0, max_iters = 500, prin
             print("Gradient Descent({bi}/{ti}):loss = {l}".format(
               bi=n_iter, ti=max_iters - 1, l = loss))
 
-        if max(abs(w_old-w)) < 10**-3:
+        if max(abs(w_old-w))/(1+max(abs(w_old))) < 10**-3:
             print("FINISHED ! IT CONVERGED")
             break
     predictor = "don't know"
