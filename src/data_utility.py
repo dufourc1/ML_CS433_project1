@@ -141,7 +141,7 @@ def cross_validation_visualization(lambds, mse_tr, mse_te):
 
 def imputation(data, method = "mean",features_treated = [1,19,20,21] ):
     '''
-    input the missing values with the different methods: mean,median
+    Impute the missing values with the different methods: mean,median
 
     example of use: data_inputed = inputation(data,method = "median")
 
@@ -153,26 +153,26 @@ def imputation(data, method = "mean",features_treated = [1,19,20,21] ):
     for the moment only treat the features number 1,19,20,21 but could be easily generalized if felt necessary
     '''
 
-    #if features_treated == "all":
-        #features_treated = np.arange(0, data.shape[1], 1)
+    if features_treated == "all":
+        features_treated = np.arange(0, data.shape[1], 1)
+
+    data_imputed = data.copy()
 
     if method == "mean":
         for i in features_treated:
             t = data[:,i]
             mean = np.mean(t[t != -999])
-            data_inputed = data.copy()
-            data_inputed[data_inputed == -999] = mean
+            data_imputed[data_imputed == -999] = mean
 
-        return data_inputed
+        return data_imputed
 
     if method == "median":
         for i in features_treated:
             t = data[:,i]
             median = np.median(t[t != -999])
-            data_inputed = data.copy()
-            data_inputed[data_inputed == -999] = median
+            data_imputed[data_imputed == -999] = median
 
-        return data_inputed
+        return data_imputed
 
 
 #************************************************
