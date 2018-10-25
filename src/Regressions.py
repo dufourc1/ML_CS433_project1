@@ -167,7 +167,7 @@ def reg_logistic_regression(y, x, lambda_, initial_w, max_iters = 100, gamma =0.
         grad += lambda_*w/2.
         w_old = w
         # update w with gradient update
-         w = w - gamma * grad
+        w = w - gamma * grad
         # calculate loss
         y = y.reshape(len(y),1)
         loss = np.mean(abs(y - categories(pred_logistic(x,w))))
@@ -175,7 +175,7 @@ def reg_logistic_regression(y, x, lambda_, initial_w, max_iters = 100, gamma =0.
             print("Gradient Descent({bi}/{ti}):loss = {l}".format(
               bi=n_iter, ti=max_iters - 1, l = loss))
         #convergence criterion
-                if max(abs(w_old-w))/(1+max(abs(w_old))) < 10**-3:
+        if max(abs(w_old-w))/(1+max(abs(w_old))) < 10**-3:
             break
     w = w.reshape(len(w))
     if pred:
