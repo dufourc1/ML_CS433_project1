@@ -132,14 +132,12 @@ def cross_validation_visualization(lambds, mse_tr, mse_te):
     plt.grid(True)
     #plt.savefig("cross_validation")
 
-
-
 #**********************************************
 # DATA INPUTATION
 #----------------------------------------------
 
 
-def imputation(data, method = "mean",features_treated = [1,19,20,21] ):
+def imputation(data, method = "mean",features_treated = "all" ):
     '''
     Impute the missing values with the different methods: mean,median
 
@@ -175,6 +173,26 @@ def imputation(data, method = "mean",features_treated = [1,19,20,21] ):
             data_imputed[:,i] = t
 
         return data_imputed
+
+#**********************************************
+# PRELIMINARY TREATMENT
+#----------------------------------------------
+
+def preliminary_treatment_X(X, keepers=np.ones(30,dtype=bool), imp_method="mean") :
+    jet_num = X[:,22]
+    null_v = np.zeros((len(jet_num),1))
+    jet_0 = np.copy(null_v)
+    jet_1 = np.copy(null_v)
+    jet_2 = np.copy(null_v)
+    jet_3 = np.copy(null_v)
+
+    jet_0[jet_num==0] = 1
+    jet_1[jet_num==1] = 1
+    jet_2[jet_num==2] = 1
+    jet_3[jet_num==3] = 1
+
+    x = standardize_data(imputation(X[:,keepers], imp_method))
+    return np.hstack((x, jet_0,jet_1,jet_2,jet_3))
 
 
 #************************************************
@@ -232,7 +250,6 @@ def split_num_jet(data,y):
     data_n0_modified = standardize_data(data_n0_modified)
 
     return data_n0_modified,y0,data_n1_modified,y1,data_n2_modified,y2
-
 
 
 #*************************************************
