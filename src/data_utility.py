@@ -204,7 +204,7 @@ def imputation(data, method = "mean",features_treated = "all" ):
 #**********************************************
 # PRELIMINARY TREATMENT
 #----------------------------------------------
-
+t
 def preliminary_treatment_X(X, keepers=np.ones(30,dtype=bool), imp_method="mean") :
     '''
     imputation, normalization of the data, features engineering are done here
