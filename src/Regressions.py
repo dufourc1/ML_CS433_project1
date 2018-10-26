@@ -19,6 +19,27 @@ def linear_predictor(x_te, w):
     return x_te.dot(w)
 
 #*****************************************
+# GRADIENT DESCENT
+#-----------------------------------------
+
+def gradient_descent(y, tx, initial_w, gamma, max_iters=500, all_step=False, printing=False):
+    '''Gradient descent algorithm to optimise requested loss'''
+    ws = [initial_w]
+    losses = []
+    w = initial_w
+    for n_iter in range(max_iters):
+        # compute loss, gradient
+        grad, loss = compute_gradient(y, tx, w)
+        # gradient w by descent update
+        w = w - gamma * grad
+        # store w and loss
+        ws.append(w)
+        losses.append(loss)
+        if printing:
+            print("Gradient Descent({bi}/{ti}): loss={l}, w0={w0}, w1={w1}".format(
+              bi=n_iter, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
+
+#*****************************************
 # GRADIENT DESCENT METHODS
 #-----------------------------------------
 
@@ -113,6 +134,20 @@ def ridge_regression(y, tx, lambda_, *args, pred=False):
         return linear_predictor, w, loss_f(err_f(y, tx, linear_predictor, w))
     return w, loss_f(err_f(y, tx, linear_predictor, w))
 
+# #**************************************************
+# # LASSO REGRESSION
+# #--------------------------------------------------
+#
+# def lasso_regression(y, tx, lambda_, *args, pred=False):
+#     """implement ridge regression.
+#     Returns [predictor,] w, loss.
+#     """
+#     w = np.zeros(tx.shape[1])
+#
+#     if pred:
+#         return linear_predictor, w, loss_f(err_f(y, tx, linear_predictor, w))
+#     return w, loss_f(err_f(y, tx, linear_predictor, w))
+
 #*************************************************
 # Logistic regression
 #-------------------------------------------------
@@ -129,14 +164,14 @@ def logistic_regression(y, x, w, max_iters = 100, gamma = 0.000005, printing = F
     y_proba1 = Logistic_regression(...)
     Have to add intercept to the data !
     '''
-
+    # w = w.reshape(len(w),1)
     for n_iter in range(max_iters):
         grad,loss = compute_gradient(y, x, w, loss = "logistic")
         w_old = w
         # update w with gradient update
-        w = w - gamma * grad
+        w = w-(gamma*grad)
         # calculate loss
-        y = y.reshape(len(y),1)
+        # y = y.reshape(len(y),1)
         loss = np.mean(abs(y - categories(pred_logistic(x,w))))
 
 
@@ -144,11 +179,11 @@ def logistic_regression(y, x, w, max_iters = 100, gamma = 0.000005, printing = F
             print("Gradient Descent({bi}/{ti}):loss = {l}".format(
               bi=n_iter, ti=max_iters - 1, l = loss))
 
-        # #convergence criterion
-        # if max(abs(w_old-w))/(1+max(abs(w_old))) < 10**-3:
-        #     break
+        #convergence criterion
+        if max(abs(w_old-w))/(1+max(abs(w_old))) < 10**(-3):
+            break
 
-    w = w.reshape(len(w))
+    # w = w.reshape(len(w))
     if pred:
         return pred_logistic, w, loss
     else :
@@ -169,7 +204,7 @@ def reg_logistic_regression(y, x, lambda_, initial_w, max_iters = 100, gamma =0.
         # update w with gradient update
         w = w - gamma * grad
         # calculate loss
-        y = y.reshape(len(y),1)
+        # y = y.reshape(len(y),1)
         loss = np.mean(abs(y - categories(pred_logistic(x,w))))
         if printing:
             print("Gradient Descent({bi}/{ti}):loss = {l}".format(
@@ -177,7 +212,7 @@ def reg_logistic_regression(y, x, lambda_, initial_w, max_iters = 100, gamma =0.
         #convergence criterion
         if max(abs(w_old-w))/(1+max(abs(w_old))) < 10**-3:
             break
-    w = w.reshape(len(w))
+    # w = w.reshape(len(w))
     if pred:
         return pred_logistic, w, loss
     else :
@@ -289,6 +324,7 @@ def multi_cross_validation(y, x, k_fold, transformations=[[id, []]], methods=[[l
     for t, t_arg in transformations:
         tx = t(x, *t_arg)
         for method, parameters in methods:
+            print('Testing for method {name}... Be patient! ;)'.format(name=method.__name__))
             for m_arg in parameters:
                 predictor, w, loss_tr, loss_te = cross_validation(y, tx, k_fold, method, m_arg, k_indices = k_indices)
                 predictors.append(predictor)

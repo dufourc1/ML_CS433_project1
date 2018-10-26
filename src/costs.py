@@ -69,23 +69,35 @@ def calculate_loss(y, tx, w, loss, kind):
     loss_func = loss_switcher.get(loss, calculate_mse)
     err_func = err_switcher.get(kind, error)
 
-    return loss_func(err_func(y, tx, w)) ####is this a mistake, should it be err_f ? I'm a bit lost
+    return loss_func(err_func(y, tx, linear_predictor, w)) ####is this a mistake, should it be err_f ? I'm a bit lost
 
 
-def compute_gradient(y, tx, w, loss='mse', kind='cont'):
+def compute_gradient(y, tx, w, loss='mse', kind='cont', **kwargs):
 
     if loss == "mse":
         """Compute the gradient of mse."""
-        err = calculate_loss(y, tx, w, loss, kind)
+        err = y - tx.dot(w)
         grad = -tx.T.dot(err) / len(err)
         return grad, err
 
     elif loss == "logistic":
         '''compute the gradient for the logistic regression'''
-        w = w.reshape(len(w),1)
-        y = y.reshape(len(y),1)
+        # w = w.reshape(len(w),1)
+        # y = y.reshape(len(y),1)
         grad = tx.T.dot(sigmoid(tx.dot(w))-y)
         err = calculate_mse(sigmoid(tx.dot(w))-y)
         return grad, err
+
+    elif loss == "lasso":
+        '''Compute the gradient for Lasso'''
+        # w = w.reshape(len(w),1)
+        # y = y.reshape(len(y),1)
+        lambda_ = kwargs.get('lambda_',0)
+        N = len(y)
+        err = y - tx.dot(w)
+        grad = -tx.T.dot(err)/N + lambda_*np.sign(w)
+        return grad, err
+
+
     else:
         raise(NotImplementedError)
