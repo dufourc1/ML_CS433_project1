@@ -187,6 +187,7 @@ def imputation(data, method = "mean",features_treated = "all" ):
 #**********************************************
 # PRELIMINARY TREATMENT
 #----------------------------------------------
+
 def preliminary_treatment_X(X, keepers=np.ones(30,dtype=bool), imp_method="mean") :
     jet_num = X[:,22]
     n = len(jet_num)
