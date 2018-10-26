@@ -22,62 +22,56 @@ def linear_predictor(x_te, w):
 # GRADIENT DESCENT
 #-----------------------------------------
 
-def gradient_descent(y, tx, initial_w, gamma, which_loss, max_iters=500, all_step=False, printing=False, **kwargs):
-    """Gradient descent algorithm.
-    Return: [predictor,] w, loss
-    ******************
-    all_step    If 'True' gives all the computed parameters and respective losses. False by default.
-    printing    If 'True' print the loss and first 2 parameters estimate at each step. False by defalt.
-    """
-
+def gradient_descent(y, tx, initial_w, gamma, max_iters=500, all_step=False, printing=False):
+    '''Gradient descent algorithm to optimise requested loss'''
     ws = [initial_w]
-    errors = []
+    losses = []
     w = initial_w
     for n_iter in range(max_iters):
-        w_old = np.copy(w)
-        # compute gradient, err
-        grad, err = compute_gradient(y, tx, w, which_loss=which_loss, **kwargs)
+        # compute loss, gradient
+        grad, loss = compute_gradient(y, tx, w)
         # gradient w by descent update
         w = w - gamma * grad
-        # store w and err
+        # store w and loss
         ws.append(w)
-        errors.append(err)
+        losses.append(loss)
         if printing:
-            print("Gradient Descent({bi}/{ti}): mse={l}, w0={w0}, w1={w1}".format(
-              bi=n_iter, ti=max_iters - 1, l=calculate_mse(err), w0=w[0], w1=w[1]))
-
-        #convergence criterion
-        if max(abs(w_old-w))/(1+max(abs(w_old))) < gamma**4:
-            if printing:
-                print('Converged at step {bi}'.format(bi=n_iter))
-            break
-
-
-    if all_step:
-        return ws, errors
-    else:
-        return ws[-1], errors[-1]
-
+            print("Gradient Descent({bi}/{ti}): loss={l}, w0={w0}, w1={w1}".format(
+              bi=n_iter, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
 
 #*****************************************
 # GRADIENT DESCENT METHODS
 #-----------------------------------------
 
 def least_squares_GD(y, tx, initial_w, gamma, max_iters=500, *args, pred=False, all_step=False, printing=False):
-    """Least squares computed though radient descent algorithm.
+    """Gradient descent algorithm.
     Return: [predictor,] w, loss
     ******************
     all_step    If 'True' gives all the computed parameters and respective losses. False by default.
     printing    If 'True' print the loss and first 2 parameters estimate at each step. False by defalt.
     """
     # Define parameters to store w and loss
-    w, err = gradient_descent(y, tx, initial_w, which_loss="mse", gamma=gamma, max_iters=max_iters, all_step=all_step, printing=printing)
+    ws = [initial_w]
+    losses = []
+    w = initial_w
+    for n_iter in range(max_iters):
+        # compute loss, gradient
+        grad, loss = compute_gradient(y, tx, w)
+        # gradient w by descent update
+        w = w - gamma * grad
+        # store w and loss
+        ws.append(w)
+        losses.append(loss)
+        if printing:
+            print("Gradient Descent({bi}/{ti}): loss={l}, w0={w0}, w1={w1}".format(
+              bi=n_iter, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
     out = []
     if pred:
         out.append(linear_predictor)
-    out.append(w)
-    out.append(calculate_mse(err))
-
+    if all_step:
+        out.append([ws, losses])
+    else:
+        out.append([ws[-1], losses[-1]])
     return out
 
 
@@ -140,23 +134,19 @@ def ridge_regression(y, tx, lambda_, *args, pred=False):
         return linear_predictor, w, loss_f(err_f(y, tx, linear_predictor, w))
     return w, loss_f(err_f(y, tx, linear_predictor, w))
 
-#**************************************************
-# LASSO REGRESSION
-#--------------------------------------------------
-
-def lasso_regression(y, tx, lambda_, initial_w=None , max_iters = 500, gamma = 0.005, printing = False, *args, pred=False):
-    """implement ridge regression.
-    Returns [predictor,] w, loss.
-    """
-    w = initial_w
-    if initial_w is None:
-        w = np.zeros(tx.shape[1])
-
-    w, _ = gradient_descent(y, tx, w, which_loss="lasso", lambda_=lambda_, gamma=gamma, max_iters=max_iters, all_step=False, printing=printing)
-
-    if pred:
-        return linear_predictor, w, loss_f(err_f(y, tx, linear_predictor, w))
-    return w, loss_f(err_f(y, tx, linear_predictor, w))
+# #**************************************************
+# # LASSO REGRESSION
+# #--------------------------------------------------
+#
+# def lasso_regression(y, tx, lambda_, *args, pred=False):
+#     """implement ridge regression.
+#     Returns [predictor,] w, loss.
+#     """
+#     w = np.zeros(tx.shape[1])
+#
+#     if pred:
+#         return linear_predictor, w, loss_f(err_f(y, tx, linear_predictor, w))
+#     return w, loss_f(err_f(y, tx, linear_predictor, w))
 
 #*************************************************
 # Logistic regression
@@ -167,18 +157,31 @@ def sigmoid(z):
     return np.exp(z)/(1+np.exp(z))
 
 
-def logistic_regression(y, x, w=None, max_iters = 100, gamma = 0.000005, printing = False, pred = False):
+def logistic_regression(y, x, w, max_iters = 100, gamma = 0.000005, printing = False, pred = False):
 
     '''
     compute the logistic regression on the data x,y, return the probability to be 1 in the classification problem (0,1), using gradient descent
     y_proba1 = Logistic_regression(...)
     Have to add intercept to the data !
     '''
+    # w = w.reshape(len(w),1)
+    for n_iter in range(max_iters):
+        grad,loss = compute_gradient(y, x, w, loss = "logistic")
+        w_old = w
+        # update w with gradient update
+        w = w-(gamma*grad)
+        # calculate loss
+        # y = y.reshape(len(y),1)
+        loss = np.mean(abs(y - categories(pred_logistic(x,w))))
 
-    if w is None:
-        w = np.zeros(tx.shape[1])
 
-    w, _ = gradient_descent(y, x, w, which_loss="logistic", gamma=gamma, max_iters=max_iters, all_step=False, printing=printing)
+        if printing:
+            print("Gradient Descent({bi}/{ti}):loss = {l}".format(
+              bi=n_iter, ti=max_iters - 1, l = loss))
+
+        #convergence criterion
+        if max(abs(w_old-w))/(1+max(abs(w_old))) < 10**(-3):
+            break
 
     loss = np.mean(abs(y - categories(pred_logistic(x,w))))
     # w = w.reshape(len(w))
