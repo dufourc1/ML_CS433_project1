@@ -72,15 +72,15 @@ def calculate_loss(y, tx, w, loss, kind):
     return loss_func(err_func(y, tx, linear_predictor, w)) ####is this a mistake, should it be err_f ? I'm a bit lost
 
 
-def compute_gradient(y, tx, w, loss='mse', kind='cont', **kwargs):
+def compute_gradient(y, tx, w, which_loss='mse', kind='cont', **kwargs):
 
-    if loss == "mse":
+    if which_loss == "mse":
         """Compute the gradient of mse."""
         err = y - tx.dot(w)
         grad = -tx.T.dot(err) / len(err)
         return grad, err
 
-    elif loss == "logistic":
+    elif which_loss == "logistic":
         '''compute the gradient for the logistic regression'''
         # w = w.reshape(len(w),1)
         # y = y.reshape(len(y),1)
@@ -88,7 +88,7 @@ def compute_gradient(y, tx, w, loss='mse', kind='cont', **kwargs):
         err = calculate_mse(sigmoid(tx.dot(w))-y)
         return grad, err
 
-    elif loss == "lasso":
+    elif which_loss == "lasso":
         '''Compute the gradient for Lasso'''
         # w = w.reshape(len(w),1)
         # y = y.reshape(len(y),1)
