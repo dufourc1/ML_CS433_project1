@@ -110,6 +110,23 @@ def build_poly(x, degree, *args):
             tx[:,feature*degree+i]=(x[:,feature])**i
     return tx
 
+def interactions(x,i,j):
+    '''
+    add to the data the vector of pointwise product between x[indices[0]] and x[indidces[1]]
+
+    data = interactions(data,4,5)
+    '''
+
+    x_new = x[:,i]*x[:,j]
+
+    #reshape so that the hstack gets the proper dimensions
+    x_new = x_new.reshape(len(x_new),1)
+
+    x_augmented = np.hstack((x,x_new))
+
+    return x_augmented
+
+
 #*************************************************
 # PLOTS FUNCTIONS
 #-------------------------------------------------
@@ -189,6 +206,12 @@ def imputation(data, method = "mean",features_treated = "all" ):
 #----------------------------------------------
 
 def preliminary_treatment_X(X, keepers=np.ones(30,dtype=bool), imp_method="mean") :
+    '''
+    imputation, normalization of the data, features engineering are done here
+    '''
+
+    keepers[22]= 0
+
     jet_num = X[:,22]
     n = len(jet_num)
     null_v = np.zeros((n,1))
@@ -202,6 +225,7 @@ def preliminary_treatment_X(X, keepers=np.ones(30,dtype=bool), imp_method="mean"
     jet_2[jet_num==2] = 1
     jet_3[jet_num==3] = 1
     intercept = np.ones((n,1))
+
 
     x = standardize_data(imputation(X[:,keepers], imp_method))
     return np.hstack((intercept, x, jet_0,jet_1,jet_2,jet_3))
