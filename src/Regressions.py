@@ -152,7 +152,7 @@ def lasso_regression(y, tx, lambda_, initial_w=None , max_iters = 500, gamma = 0
     if initial_w is None:
         w = np.zeros(tx.shape[1])
 
-    w, _ = gradient_descent(y, tx, initial_w, which_loss="lasso", gamma=gamma, max_iters=max_iters, all_step=False, printing=printing)
+    w, _ = gradient_descent(y, tx, w, which_loss="lasso", lambda_=lambda_, gamma=gamma, max_iters=max_iters, all_step=False, printing=printing)
 
     if pred:
         return linear_predictor, w, loss_f(err_f(y, tx, linear_predictor, w))
@@ -178,25 +178,9 @@ def logistic_regression(y, x, w=None, max_iters = 100, gamma = 0.000005, printin
     if w is None:
         w = np.zeros(tx.shape[1])
 
-    # w = w.reshape(len(w),1)
-    for n_iter in range(max_iters):
-        grad,loss = compute_gradient(y, x, w, loss = "logistic")
-        w_old = w
-        # update w with gradient update
-        w = w-(gamma*grad)
-        # calculate loss
-        # y = y.reshape(len(y),1)
-        loss = np.mean(abs(y - categories(pred_logistic(x,w))))
+    w, _ = gradient_descent(y, x, w, which_loss="logistic", gamma=gamma, max_iters=max_iters, all_step=False, printing=printing)
 
-
-        if printing:
-            print("Gradient Descent({bi}/{ti}):loss = {l}".format(
-              bi=n_iter, ti=max_iters - 1, l = loss))
-
-        #convergence criterion
-        if max(abs(w_old-w))/(1+max(abs(w_old))) < 10**(-3):
-            break
-
+    loss = np.mean(abs(y - categories(pred_logistic(x,w))))
     # w = w.reshape(len(w))
     if pred:
         return pred_logistic, w, loss
