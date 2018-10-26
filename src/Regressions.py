@@ -183,6 +183,7 @@ def logistic_regression(y, x, w, max_iters = 100, gamma = 0.000005, printing = F
         if max(abs(w_old-w))/(1+max(abs(w_old))) < 10**(-3):
             break
 
+    loss = np.mean(abs(y - categories(pred_logistic(x,w))))
     # w = w.reshape(len(w))
     if pred:
         return pred_logistic, w, loss
