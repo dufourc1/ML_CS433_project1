@@ -130,6 +130,7 @@ def least_squares(y, tx, *args, pred=False,):
 # RIDGE REGRESSION
 #--------------------------------------------------
 
+
 def ridge_regression(y, tx, lambda_, *args, pred=False):
     """implement ridge regression.
     Returns [predictor,] w, loss.

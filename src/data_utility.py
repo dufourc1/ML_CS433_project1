@@ -210,6 +210,7 @@ def preliminary_treatment_X(X, keepers=np.ones(30,dtype=bool), imp_method="mean"
     imputation, normalization of the data, features engineering are done here
     '''
 
+
     keepers[22]= 0
 
     jet_num = X[:,22]
