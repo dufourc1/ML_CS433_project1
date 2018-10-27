@@ -29,33 +29,42 @@ def gradient_descent(y, tx, initial_w, gamma, which_loss, max_iters=500, all_ste
     printing    If 'True' print the loss and first 2 parameters estimate at each step. False by defalt.
     """
 
-    ws = [initial_w]
-    errors = []
     w = initial_w
+    err = np.zeros(len(y))
+    if all_step:
+        ws = [initial_w]
+        errors = []
+
     for n_iter in range(max_iters):
         w_old = np.copy(w)
         # compute gradient, err
         grad, err = compute_gradient(y, tx, w, which_loss=which_loss, **kwargs)
         # gradient w by descent update
         w = w - gamma * grad
-        # store w and err
-        ws.append(w)
-        errors.append(err)
+
+        if all_step:
+            # store w and err
+            ws.append(w)
+            errors.append(err)
+
         if printing:
             print("Gradient Descent({bi}/{ti}): mse={l}, w0={w0}, w1={w1}".format(
               bi=n_iter, ti=max_iters - 1, l=calculate_mse(err), w0=w[0], w1=w[1]))
 
         #convergence criterion
-        if max(abs(w_old-w))/(1+max(abs(w_old))) < gamma**4:
+        if max(abs(w_old-w))/(1+max(abs(w_old))) < gamma**10:
             if printing:
                 print('Converged at step {bi}'.format(bi=n_iter))
             break
 
-
     if all_step:
-        return ws, errors
+        w_out = ws
+        err_out = errors
     else:
-        return ws[-1], errors[-1]
+        w_out = w
+        err_out = err
+
+    return w_out, err_out
 
 
 #*****************************************
@@ -313,7 +322,8 @@ def multi_cross_validation(y, x, k_fold, transformations=[[id, []]], methods=[[l
     for t, t_arg in transformations:
         tx = t(x, *t_arg)
         for method, parameters in methods:
-            print('Testing for method {name}... Be patient! ;)'.format(name=method.__name__))
+            print('Testing for method {name} with transf. {transf}({list})... Be patient! ;)'.format(name=method.__name__,
+            transf=t.__name__, list=t_arg))
             for m_arg in parameters:
                 predictor, w, loss_tr, loss_te = cross_validation(y, tx, k_fold, method, m_arg, k_indices = k_indices)
                 predictors.append(predictor)

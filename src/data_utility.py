@@ -98,17 +98,28 @@ def feature_transform(x, func, features, *args):
         tx[:,feature] = func(tx[:,feature], *args)
     return tx
 
-def build_poly(x, degree, *args):
+def build_poly(x, degree, *args, pretreated=True):
     """polynomial basis functions for input data x, for j=0 up to j=degree.
-    Return the augmented basis matrix tx."""
+    Return the augmented basis matrix tx.
+    If pretreated = True, we suppose the first 4 columns are cathegorical (they sum up to the identity).
+    """
 
-    n,p = x.shape
-    tx = np.zeros((n,(degree*p)+1))
-    tx[:,0] = 1
-    for feature in range(p):
-        for i in range(1,degree+1):
-            tx[:,feature*degree+i]=(x[:,feature])**i
-    return tx
+    if pretreated:
+        n,p = x.shape
+        tx = np.zeros((n,(degree*(p-4))+4))
+        tx[:,:4] = x[:,:4]
+        for feature in range(p-4):
+            for i in range(1,degree+1):
+                tx[:,3+feature*degree+i]=(x[:,4+feature])**i
+        return tx
+    else:
+        n,p = x.shape
+        tx = np.zeros((n,(degree*p)+1))
+        tx[:,0] = 1
+        for feature in range(p):
+            for i in range(1,degree+1):
+                tx[:,feature*degree+i]=(x[:,feature])**i
+        return tx
 
 def interactions(x,i,j):
     '''
@@ -225,11 +236,11 @@ def preliminary_treatment_X(X, keepers=np.ones(30,dtype=bool), imp_method="mean"
     jet_1[jet_num==1] = 1
     jet_2[jet_num==2] = 1
     jet_3[jet_num==3] = 1
-    intercept = np.ones((n,1))
+    # intercept = np.ones((n,1)) #We do not insert the intercept as it is just the sum of the categories.
 
-
+    # x = X[:,keepers]
     x = standardize_data(imputation(X[:,keepers], imp_method))
-    return np.hstack((intercept, x, jet_0,jet_1,jet_2,jet_3))
+    return np.hstack((jet_0,jet_1,jet_2,jet_3, x))
 
 
 #************************************************
