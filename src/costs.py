@@ -11,7 +11,6 @@ from data_utility import *
 from Regressions import *
 
 
-
 def sigmoid(z):
     return np.exp(z)/(1+np.exp(z))
 

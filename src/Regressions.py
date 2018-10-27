@@ -1,6 +1,5 @@
 '''
 functions to implement least squares using gradient descent, stochastic gradient descent or normal equation
-
 All functions return w and loss , which is the last weight vector of the method and the corresponding loss
 '''
 
@@ -130,7 +129,6 @@ def least_squares(y, tx, *args, pred=False,):
 # RIDGE REGRESSION
 #--------------------------------------------------
 
-
 def ridge_regression(y, tx, lambda_, *args, pred=False):
     """implement ridge regression.
     Returns [predictor,] w, loss.
@@ -177,7 +175,7 @@ def logistic_regression(y, x, w=None, max_iters = 100, gamma = 0.000005, printin
     '''
 
     if w is None:
-        w = np.zeros(x.shape[1])
+        w = np.zeros(tx.shape[1])
 
     w, _ = gradient_descent(y, x, w, which_loss="logistic", gamma=gamma, max_iters=max_iters, all_step=False, printing=printing)
 
@@ -235,11 +233,9 @@ def pred_logistic(x,w):
 def regression(y, tx, method, parameters=None, loss='mse', kind='cont'):
     '''General regression function.
     Specify response y, features matrix tx, desired regression method and a parameters list formatted as follows.
-
     METHOD              PARAMETERS
     least squares       None
     ridge               [lambda_]
-
     '''
     reg_switcher = {
         'least squares': least_squares,
@@ -257,9 +253,7 @@ def regression(y, tx, method, parameters=None, loss='mse', kind='cont'):
 def single_validation(y, x, k_indices, k, method, *args_method):
     """
     Train given model on all subset of k_indices but k-th and compute prediction error over k-th subset of k_indices.
-
     Returns predictor, w, single_loss_tr, single_loss_te
-
     """
 
     # get k'th subgroup in test, others in train
@@ -280,10 +274,7 @@ def cross_validation(y, tx, k_fold, method, *args_method, k_indices=None, seed=1
     '''
     return an estimate of the expected predicted error outside of the train set for the model, using k fold cross validation
     *args_model are the parameter needed for the model to train (for example lambda for ridge,..,)
-
     estimate = CV(y, tx, k_fold[, k_indices, loss_f, err_f,], model, *args_model)
-
-
     prediction = model(x_test,y_train,x_train,*args_model): model is a function that return the prediction classification for a specific model
     '''
 
@@ -306,7 +297,6 @@ def cross_validation(y, tx, k_fold, method, *args_method, k_indices=None, seed=1
 def multi_cross_validation(y, x, k_fold, transformations=[[id, []]], methods=[[least_squares, []]], seed=1, only_best=True):
     '''
         Run cross validation for whatever you can think of.
-
         Return predictors, ws, losses_tr, losses_te, t_list, m_list. (Only best value if only_best=True)
     '''
     # split data in k fold
