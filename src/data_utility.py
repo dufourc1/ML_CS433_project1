@@ -83,16 +83,27 @@ def id(x,*args):
     return x
 
 def log_plus(feature, n=1, *args):
+    '''
+    log_transform of the translated feature
+    return np.log(feature + n)
+    '''
     return np.log(feature + n)
 
-def feature_multitransform(x, functions, *args):
-    tx = np.copy(x)
-    for func, features, *arg in functions:
-        for feature in features:
-            tx[:,feature] = func(tx[:,feature], *arg)
-    return tx
+# def feature_multitransform(x, functions, *args):
+#     '''
+#     apply multiple tranformations to multiple features
+#     functions is a list of the function applied with its argument: [[f1,[arg1,arg2]],[f2,[arg1,arg2]]]
+#     '''
+#     tx = np.copy(x)
+#     for func, features, *arg in functions:
+#         for feature in features:
+#             tx[:,feature] = func(tx[:,feature], *arg)
+#     return tx
 
 def feature_transform(x, func, features, *args):
+    '''
+    apply one transformation to multiple features
+    '''
     tx = np.copy(x)
     for feature in features:
         tx[:,feature] = func(tx[:,feature], *args)
@@ -219,6 +230,8 @@ def imputation(data, method = "mean",features_treated = "all" ):
 def preliminary_treatment_X(X, keepers=np.ones(30,dtype=bool), imp_method="mean") :
     '''
     imputation, normalization of the data, features engineering are done here
+
+    the feature 22 is broken down in four binary vectors depending on the value of num_jet
     '''
 
 
@@ -305,6 +318,9 @@ def split_num_jet(data,y):
 #-------------------------------------------------
 
 def categories(y_hat):
+    '''
+    return the prediction based on the estimated propability that y = 1 knowing the features values
+    '''
     y_cat = np.copy(y_hat)
     y_cat[y_hat >= 0.5] = 1
     y_cat[y_hat < 0.5] = 0
