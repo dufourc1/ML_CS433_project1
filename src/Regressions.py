@@ -4,9 +4,6 @@ All functions return w and loss , which is the last weight vector of the method 
 '''
 
 import numpy as np
-
-# from proj1_helpers import *
-# from data_utility import *
 from costs import *
 
 #*****************************************
@@ -16,6 +13,12 @@ from costs import *
 def linear_predictor(x_te, w):
     '''Compute predictions for x_te in a linear model with weights w.'''
     return x_te.dot(w)
+
+def pred_logistic(x,w):
+    #w = w.reshape(len(w),1)
+    y_hat = sigmoid(x.dot(w))
+    #y_hat = y_hat.reshape(len(y_hat))
+    return y_hat
 
 #*****************************************
 # GRADIENT DESCENT
@@ -71,12 +74,12 @@ def gradient_descent(y, tx, initial_w, gamma, which_loss, max_iters=500, all_ste
 # GRADIENT DESCENT METHODS
 #-----------------------------------------
 
-def least_squares_GD(y, tx, initial_w, gamma, max_iters=500, *args, pred=False, all_step=False, printing=False):
+def least_squares_GD(y, tx, initial_w, max_iters=500, gamma=0.05, *args, pred=False, all_step=False, printing=False):
     """Least squares computed though radient descent algorithm.
     Return: [predictor,] w, loss
     ******************
     all_step    If 'True' gives all the computed parameters and respective losses. False by default.
-    printing    If 'True' print the loss and first 2 parameters estimate at each step. False by defalt.
+    printing    If 'True' print the loss and first 2 parameters estimate at each step. False by default.
     """
     # Define parameters to store w and loss
     w, err = gradient_descent(y, tx, initial_w, which_loss="mse", gamma=gamma, max_iters=max_iters, all_step=all_step, printing=printing)
@@ -89,7 +92,7 @@ def least_squares_GD(y, tx, initial_w, gamma, max_iters=500, *args, pred=False, 
     return out
 
 
-def least_squares_SGD(y, tx, initial_w, batch_size, gamma, max_iters=500, *args, pred=False, all_step=False, printing=False):
+def least_squares_SGD(y, tx, initial_w, batch_size=1, max_iters=500, gamma=0.05, *args, pred=False, all_step=False, printing=False):
     """Stochastic gradient descent."""
     # Define parameters to store w and loss
     ws = [initial_w]
@@ -175,7 +178,7 @@ def sigmoid(z):
     return np.exp(z)/(1+np.exp(z))
 
 
-def logistic_regression(y, x, w=None, max_iters = 100, gamma = 0.000005, printing = False, pred = False):
+def logistic_regression(y, x, w=None, max_iters = 1000, gamma = 0.000005, printing = False, pred = False):
 
     '''
     compute the logistic regression on the data x,y, return the probability to be 1 in the classification problem (0,1), using gradient descent
@@ -183,7 +186,7 @@ def logistic_regression(y, x, w=None, max_iters = 100, gamma = 0.000005, printin
     Have to add intercept to the data !
     '''
 
-    if w is None:
+    if (w is None) or (len(w) != tx.shape[1]):
         w = np.zeros(tx.shape[1])
 
     w, _ = gradient_descent(y, x, w, which_loss="logistic", gamma=gamma, max_iters=max_iters, all_step=False, printing=printing)
@@ -196,7 +199,7 @@ def logistic_regression(y, x, w=None, max_iters = 100, gamma = 0.000005, printin
         return w, loss
 
 
-def reg_logistic_regression(y, x, lambda_, initial_w=None, max_iters = 100, gamma =0.000005 , printing = False, pred = False):
+def reg_logistic_regression(y, x, lambda_, initial_w=None, max_iters = 1000, gamma =0.000005 , printing = False, pred = False):
     '''
     compute the reguralized logistic regression using gradient descent
     w,loss = reg_logistic_regression(..)
@@ -226,17 +229,6 @@ def reg_logistic_regression(y, x, lambda_, initial_w=None, max_iters = 100, gamm
         return pred_logistic, w, loss
     else :
         return w, loss
-
-
-
-
-def pred_logistic(x,w):
-    #w = w.reshape(len(w),1)
-    y_hat = sigmoid(x.dot(w))
-    #y_hat = y_hat.reshape(len(y_hat))
-    return y_hat
-
-
 
 #**************************************************
 # GENERAL REGRESSION FUNCTION
@@ -287,7 +279,9 @@ def cross_validation(y, tx, k_fold, method, *args_method, k_indices=None, seed=1
     return an estimate of the expected predicted error outside of the train set for the model, using k fold cross validation
     *args_model are the parameter needed for the model to train (for example lambda for ridge,..,)
     estimate = CV(y, tx, k_fold[, k_indices, loss_f, err_f,], model, *args_model)
-    prediction = model(x_test,y_train,x_train,*args_model): model is a function that return the prediction classification for a specific model
+    prediction = model(x_test,y_train,x_train,*args_model): model is a function that return the prediction classification for a specific modelself.
+
+    Return predictor, w, loss_tr, loss_te
     '''
 
     if k_indices is None:
@@ -308,8 +302,21 @@ def cross_validation(y, tx, k_fold, method, *args_method, k_indices=None, seed=1
 
 def multi_cross_validation(y, x, k_fold, transformations=[[id, []]], methods=[[least_squares, []]], seed=1, only_best=True):
     '''
-        Run cross validation for whatever you can think of.
+        Run cross validation for whatever you can think of (combination of models, different transformations for the features... sorry it doesn't cure cancer yet @william ;) )
+
         Return predictors, ws, losses_tr, losses_te, t_list, m_list. (Only best value if only_best=True)
+
+        example of use:
+
+            transformations = [[id,[]],
+                    [feature_transform, [np.log, [9, 13, 15]]],
+                    [build_poly, [2]]]
+
+            methods = [[ridge_regression, lambdas],
+                    [logistic_regression, [w]]]
+
+            predictor, w, loss_tr, loss_te, transformation, method = multi_cross_validation(y_tr, tx, k_fold, transformations=transformations, methods=methods, seed=2)
+
     '''
     # split data in k fold
     k_indices = build_k_indices(y, k_fold, seed)
