@@ -43,7 +43,7 @@ For the sake of automation we added a `pred` keyword argument (kwarg) to all our
 
 All functions using the `gradient_descent` algorithm have, in addition, the two kwargs `printing, all_step`, which are `False` by default. If `printing=True`, then at all GD steps you will see in the shell the actual mse value and the value of the first two parameters of `w`. If `all_step=True`, then the function returns all the computed w-s and errors (by default they are not stored and only the last value is given).
 
-We implemented the following functions:
+The following functions were implemented:
 
 | Function            | Arguments |
 |-------------------- |-----------|
@@ -58,9 +58,9 @@ The default values were chosen in order to get convergence on the GD algorithm.
 
 ### Notes on `cross_validation` and `multi_cross_validation`
 
-We implemented two main functions in order to chose our model, and in particular to get an estimation of the prediction error.
+These are the two main functions inplemented in order to chose our model, and in particular to get an estimation of the prediction error.
 
-* `cross_validation(y, tx, k_fold, method, *args_method[, k_indices, seed])` compute the k-fold cross validation for the estimation of y using a the method-function stored (as pointer) in the argument `method`. The arguments necessary for the `method` are to be passed freely after method. It returns `predictor, w, loss_tr, loss_te`, which are, in order, the predicting function, the mean of the trained weights, the mean of the train error and the estimate test error.
+* `cross_validation(y, tx, k_fold, method, *args_method[, k_indices, seed])` compute the k-fold cross validation for the estimation of `y` using a the method-function stored (as pointer) in the argument `method`. The arguments necessary for the `method` are to be passed freely after method. It returns `predictor, w, loss_tr, loss_te`, which are, in order, the predicting function, the mean of the trained weights, the mean of the train error and the estimate test error.
 
 * `multi_cross_validation(y, x, k_fold[, transformations=[[id, []]], methods=[[least_squares, []]], seed=1, only_best=True])` Perform automatically the cross validation on all the combinations of transformations in the `transformations` list (their parameters have to be passed as a list coupled with the transformation) and methods with changing parameters in the `methods` list (the coupled list have in this case to be a list of the tuples of parameters combinations to test.) It then plot the estimated losses (both on train and test) ans outputs `predictor, weight, losses_tr, losses_te, transformations_list, methods_list`. If `only_best=True`, those are the variables corresponding to the lowest test-error estimate, otherwise they contain the variables computed at each step. An implementation example can be found in the documentation.
 
