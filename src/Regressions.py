@@ -71,7 +71,7 @@ def gradient_descent(y, tx, initial_w, gamma, which_loss, max_iters=500, all_ste
 # GRADIENT DESCENT METHODS
 #-----------------------------------------
 
-def least_squares_GD(y, tx, initial_w, gamma, max_iters=500, *args, pred=False, all_step=False, printing=False):
+def least_squares_GD(y, tx, initial_w, max_iters=500, gamma=0.05, *args, pred=False, all_step=False, printing=False):
     """Least squares computed though radient descent algorithm.
     Return: [predictor,] w, loss
     ******************
@@ -89,7 +89,7 @@ def least_squares_GD(y, tx, initial_w, gamma, max_iters=500, *args, pred=False, 
     return out
 
 
-def least_squares_SGD(y, tx, initial_w, batch_size, gamma, max_iters=500, *args, pred=False, all_step=False, printing=False):
+def least_squares_SGD(y, tx, initial_w, batch_size, max_iters=500, gamma=0.05, *args, pred=False, all_step=False, printing=False):
     """Stochastic gradient descent."""
     # Define parameters to store w and loss
     ws = [initial_w]
