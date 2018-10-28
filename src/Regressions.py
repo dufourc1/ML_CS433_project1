@@ -92,7 +92,7 @@ def least_squares_GD(y, tx, initial_w, max_iters=500, gamma=0.05, *args, pred=Fa
     return out
 
 
-def least_squares_SGD(y, tx, initial_w, batch_size, max_iters=500, gamma=0.05, *args, pred=False, all_step=False, printing=False):
+def least_squares_SGD(y, tx, initial_w, batch_size=1, max_iters=500, gamma=0.05, *args, pred=False, all_step=False, printing=False):
     """Stochastic gradient descent."""
     # Define parameters to store w and loss
     ws = [initial_w]
@@ -178,7 +178,7 @@ def sigmoid(z):
     return np.exp(z)/(1+np.exp(z))
 
 
-def logistic_regression(y, x, w=None, max_iters = 100, gamma = 0.000005, printing = False, pred = False):
+def logistic_regression(y, x, w=None, max_iters = 1000, gamma = 0.000005, printing = False, pred = False):
 
     '''
     compute the logistic regression on the data x,y, return the probability to be 1 in the classification problem (0,1), using gradient descent
@@ -199,7 +199,7 @@ def logistic_regression(y, x, w=None, max_iters = 100, gamma = 0.000005, printin
         return w, loss
 
 
-def reg_logistic_regression(y, x, lambda_, initial_w=None, max_iters = 100, gamma =0.000005 , printing = False, pred = False):
+def reg_logistic_regression(y, x, lambda_, initial_w=None, max_iters = 1000, gamma =0.000005 , printing = False, pred = False):
     '''
     compute the reguralized logistic regression using gradient descent
     w,loss = reg_logistic_regression(..)
@@ -279,7 +279,9 @@ def cross_validation(y, tx, k_fold, method, *args_method, k_indices=None, seed=1
     return an estimate of the expected predicted error outside of the train set for the model, using k fold cross validation
     *args_model are the parameter needed for the model to train (for example lambda for ridge,..,)
     estimate = CV(y, tx, k_fold[, k_indices, loss_f, err_f,], model, *args_model)
-    prediction = model(x_test,y_train,x_train,*args_model): model is a function that return the prediction classification for a specific model
+    prediction = model(x_test,y_train,x_train,*args_model): model is a function that return the prediction classification for a specific modelself.
+
+    Return predictor, w, loss_tr, loss_te
     '''
 
     if k_indices is None:
@@ -301,17 +303,17 @@ def cross_validation(y, tx, k_fold, method, *args_method, k_indices=None, seed=1
 def multi_cross_validation(y, x, k_fold, transformations=[[id, []]], methods=[[least_squares, []]], seed=1, only_best=True):
     '''
         Run cross validation for whatever you can think of (combination of models, different transformations for the features... sorry it doesn't cure cancer yet @william ;) )
+
         Return predictors, ws, losses_tr, losses_te, t_list, m_list. (Only best value if only_best=True)
 
-        exemple of use:
+        example of use:
 
             transformations = [[id,[]],
                     [feature_transform, [np.log, [9, 13, 15]]],
                     [build_poly, [2]]]
 
             methods = [[ridge_regression, lambdas],
-                    [logistic_regression, [w]],
-                    [reg_logistic_regression, lambdas]]
+                    [logistic_regression, [w]]]
 
             predictor, w, loss_tr, loss_te, transformation, method = multi_cross_validation(y_tr, tx, k_fold, transformations=transformations, methods=methods, seed=2)
 
