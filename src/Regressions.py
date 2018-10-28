@@ -4,9 +4,6 @@ All functions return w and loss , which is the last weight vector of the method 
 '''
 
 import numpy as np
-
-# from proj1_helpers import *
-# from data_utility import *
 from costs import *
 
 #*****************************************
@@ -76,7 +73,7 @@ def least_squares_GD(y, tx, initial_w, max_iters=500, gamma=0.05, *args, pred=Fa
     Return: [predictor,] w, loss
     ******************
     all_step    If 'True' gives all the computed parameters and respective losses. False by default.
-    printing    If 'True' print the loss and first 2 parameters estimate at each step. False by defalt.
+    printing    If 'True' print the loss and first 2 parameters estimate at each step. False by default.
     """
     # Define parameters to store w and loss
     w, err = gradient_descent(y, tx, initial_w, which_loss="mse", gamma=gamma, max_iters=max_iters, all_step=all_step, printing=printing)
@@ -308,8 +305,21 @@ def cross_validation(y, tx, k_fold, method, *args_method, k_indices=None, seed=1
 
 def multi_cross_validation(y, x, k_fold, transformations=[[id, []]], methods=[[least_squares, []]], seed=1, only_best=True):
     '''
-        Run cross validation for whatever you can think of.
+        Run cross validation for whatever you can think of (combination of models, different transformations for the features... sorry it doesn't cure cancer yet @william ;) )
         Return predictors, ws, losses_tr, losses_te, t_list, m_list. (Only best value if only_best=True)
+
+        exemple of use:
+
+            transformations = [[id,[]],
+                    [feature_transform, [np.log, [9, 13, 15]]],
+                    [build_poly, [2]]]
+
+            methods = [[ridge_regression, lambdas],
+                    [logistic_regression, [w]],
+                    [reg_logistic_regression, lambdas]]
+
+            predictor, w, loss_tr, loss_te, transformation, method = multi_cross_validation(y_tr, tx, k_fold, transformations=transformations, methods=methods, seed=2)
+
     '''
     # split data in k fold
     k_indices = build_k_indices(y, k_fold, seed)

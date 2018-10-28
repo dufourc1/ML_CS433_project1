@@ -76,7 +76,7 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
 
 
 def standardize(x):
-    """Standardize the original data set."""
+    """Standardize a column."""
     mean_x = np.mean(x)
     x = x - mean_x
     std_x = np.std(x)
@@ -85,6 +85,9 @@ def standardize(x):
     return x, mean_x, std_x
 
 def standardize_data(data):
+    '''
+    normalization of a data_set
+    '''
     for i in range(0,data.shape[1]):
         data[:,i],mean,variance = standardize(data[:,i])
 
