@@ -46,7 +46,7 @@ All functions using the `gradient_descent` algorithm have, in addition, the two 
 We implemented the following functions:
 
 | Function            | Arguments |
-|-------------------- |-----------|------|
+|-------------------- |-----------|
 | `least_squares_GD`  | `y, tx, initial_w[, max_iters, gamma, *args, **kwargs]`  |
 | `least_squares_SGD` | `y, tx, initial_w[, batch_size, max_iters, gamma, *args, **kwargs]`  |
 | `least_squares`     | `y, tx[, **kwargs]` |
