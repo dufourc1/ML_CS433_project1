@@ -14,6 +14,12 @@ def linear_predictor(x_te, w):
     '''Compute predictions for x_te in a linear model with weights w.'''
     return x_te.dot(w)
 
+def pred_logistic(x,w):
+    #w = w.reshape(len(w),1)
+    y_hat = sigmoid(x.dot(w))
+    #y_hat = y_hat.reshape(len(y_hat))
+    return y_hat
+
 #*****************************************
 # GRADIENT DESCENT
 #-----------------------------------------
@@ -223,17 +229,6 @@ def reg_logistic_regression(y, x, lambda_, initial_w=None, max_iters = 100, gamm
         return pred_logistic, w, loss
     else :
         return w, loss
-
-
-
-
-def pred_logistic(x,w):
-    #w = w.reshape(len(w),1)
-    y_hat = sigmoid(x.dot(w))
-    #y_hat = y_hat.reshape(len(y_hat))
-    return y_hat
-
-
 
 #**************************************************
 # GENERAL REGRESSION FUNCTION
