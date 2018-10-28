@@ -186,7 +186,7 @@ def logistic_regression(y, x, w=None, max_iters = 100, gamma = 0.000005, printin
     Have to add intercept to the data !
     '''
 
-    if w is None:
+    if (w is None) or (len(w) != tx.shape[1]):
         w = np.zeros(tx.shape[1])
 
     w, _ = gradient_descent(y, x, w, which_loss="logistic", gamma=gamma, max_iters=max_iters, all_step=False, printing=printing)
