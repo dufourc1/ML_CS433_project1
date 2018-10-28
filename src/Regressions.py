@@ -185,7 +185,7 @@ def logistic_regression(y, x, w=None, max_iters = 1000, gamma = 0.000005, printi
     y_proba1 = Logistic_regression(...)
     Have to add intercept to the data !
     '''
-
+    
     if (w is None) or (len(w) != tx.shape[1]):
         w = np.zeros(tx.shape[1])
 
