@@ -5,9 +5,9 @@ All functions return w and loss , which is the last weight vector of the method 
 
 import numpy as np
 
+# from proj1_helpers import *
+# from data_utility import *
 from costs import *
-from data_utility import *
-from proj1_helpers import *
 
 #*****************************************
 # PREDICTORS
@@ -196,12 +196,15 @@ def logistic_regression(y, x, w=None, max_iters = 100, gamma = 0.000005, printin
         return w, loss
 
 
-def reg_logistic_regression(y, x, lambda_, initial_w, max_iters = 100, gamma =0.000005 , printing = False, pred = False):
+def reg_logistic_regression(y, x, lambda_, initial_w=None, max_iters = 100, gamma =0.000005 , printing = False, pred = False):
     '''
     compute the reguralized logistic regression using gradient descent
     w,loss = reg_logistic_regression(..)
     '''
     w = initial_w
+    if initial_w is None:
+        w = np.zeros(x.shape[1])
+
     for n_iter in range(max_iters):
         grad,loss = compute_gradient(y, x, w, loss = "logistic")
         #add the constrained part
@@ -325,7 +328,7 @@ def multi_cross_validation(y, x, k_fold, transformations=[[id, []]], methods=[[l
             print('Testing for method {name} with transf. {transf}({list})... Be patient! ;)'.format(name=method.__name__,
             transf=t.__name__, list=t_arg))
             for m_arg in parameters:
-                predictor, w, loss_tr, loss_te = cross_validation(y, tx, k_fold, method, m_arg, k_indices = k_indices)
+                predictor, w, loss_tr, loss_te = cross_validation(y, tx, k_fold, method, m_arg, k_indices=k_indices)
                 predictors.append(predictor)
                 ws.append(w)
                 losses_tr.append(loss_tr)
