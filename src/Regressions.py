@@ -73,7 +73,7 @@ def least_squares_GD(y, tx, initial_w, gamma, max_iters=500, *args, pred=False, 
     Return: [predictor,] w, loss
     ******************
     all_step    If 'True' gives all the computed parameters and respective losses. False by default.
-    printing    If 'True' print the loss and first 2 parameters estimate at each step. False by defalt.
+    printing    If 'True' print the loss and first 2 parameters estimate at each step. False by default.
     """
     # Define parameters to store w and loss
     w, err = gradient_descent(y, tx, initial_w, which_loss="mse", gamma=gamma, max_iters=max_iters, all_step=all_step, printing=printing)
