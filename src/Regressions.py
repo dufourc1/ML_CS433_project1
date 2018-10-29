@@ -201,7 +201,7 @@ def logistic_regression(y, tx, w=None, max_iters = 1000, gamma = 0.000005, print
         return w, loss
 
 
-def reg_logistic_regression(y, x, lambda_, initial_w=None, max_iters = 1000, gamma =0.000005 , printing = False, pred = False):
+def reg_logistic_regression(y, x, lambda_, initial_w=None, max_iters = 1000, gamma =0.00005 , printing = False, pred = False):
     '''
     compute the reguralized logistic regression using gradient descent
     w,loss = reg_logistic_regression(..)
@@ -224,8 +224,8 @@ def reg_logistic_regression(y, x, lambda_, initial_w=None, max_iters = 1000, gam
             print("Gradient Descent({bi}/{ti}):loss = {l}".format(
               bi=n_iter, ti=max_iters - 1, l = loss))
         #convergence criterion
-        if max(abs(w_old-w))/(1+max(abs(w_old))) < 10**-3:
-            break
+        # if max(abs(w_old-w))/(1+max(abs(w_old))) < 10**-3:
+        #     break
     # w = w.reshape(len(w))
     if pred:
         return pred_logistic, w, loss
