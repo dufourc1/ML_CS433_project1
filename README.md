@@ -56,6 +56,22 @@ The following functions were implemented:
 
 The default values were chosen in order to get convergence on the GD algorithm.
 
+###### ATTENTION:
+Since our goal is to find a classification model, we have that all functions compute the error vector **err** as categorical (i.e if **y_hat** is the vector of estimated categories and **y** the true categories, i-th coordinate of **err** will be **err**[i]=**1**{**y**[i]=**y_hat**[i]}, where **1** is the indicator function.). Furthermore, the loss value returned is the misclassification ratio (i.e. the number of wrong predictions over the total number of predictions).
+
+If one desires to implement our functions for different tasks, it is enough to set the two global functions `err_f` and `loss_f` to the desired ones.
+
+| Possible `loss_f`s |            | Possible `err_f`s |
+|--------------------|------------|--------------------|
+| `calculate_mae`    | MAE        | `error` | Return the distance between predicted end true values (continuous estimation)
+| `calculate_mse`    | MSE        | `category_error` | Return the error indicator (as explained above) |
+| `calculate_rmse`   | RMSE       | |
+
+They can be set as follows:
+
+    err_f = error #For continuous estimation.
+    loss_f = calculate_mse #For mean squared error loss.
+
 ### Notes on `cross_validation` and `multi_cross_validation`
 
 These are the two main functions inplemented in order to chose our model, and in particular to get an estimation of the prediction error.
