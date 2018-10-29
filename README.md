@@ -52,7 +52,7 @@ This script produces a csv file containing the predictions `Kaggle_CDM_submissio
 
   c) add interactions between the categorical variables and the continuous features
 
-  d) train a 'Ridge regression model', using 'cross_validation' to determine the hyper-parameter `lambda`
+  d) train a Ridge regression model, using `cross_validation` to determine the hyper-parameter `lambda`
 
   e) compute predictions and create the .csv file
 
