@@ -21,12 +21,15 @@ Graphical:
 
 ### Prerequisites
 
-The folder structure is the following:
+The folder structure has to be the following:
 
     .
     ├── Data                    # Data files, in .csv
+        ├── train.csv
+        └── test.csv
     ├── src                     # Source files
     └── README.md
+    
 
 All the scripts are in src, where in `run.py` you can find the code that generates our prediction.
 
@@ -57,7 +60,7 @@ The following functions were implemented:
 The default values were chosen in order to get convergence on the GD algorithm.
 
 ###### ATTENTION:
-Since our goal is to find a classification model, we have that all functions compute the error vector **err** as categorical (i.e if **y_hat** is the vector of estimated categories and **y** the true categories, i-th coordinate of **err** will be **err**[i]=**1**{**y**[i]=**y_hat**[i]}, where **1** is the indicator function.). Furthermore, the loss value returned is the misclassification ratio (i.e. the number of wrong predictions over the total number of predictions).
+Since our goal is to find a classification model, we have that all functions compute the error vector **err** as categorical (i.e if **y_hat** is the vector of estimated categories and **y** the true categories, j-th coordinate of **err** will be `err[j]=1{y[j]=y_hat[j]}`, where **1** is the indicator function.). Furthermore, the loss value returned is the misclassification ratio (i.e. the number of wrong predictions over the total number of predictions).
 
 If one desires to implement our functions for different tasks, it is enough to set the two global functions `err_f` and `loss_f` to the desired ones.
 
