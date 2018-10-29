@@ -38,7 +38,7 @@ All the scripts are in src, where in `run.py` you can find the code that generat
 
 ### run.py
 
-<!-- @Marie put here the description of how you obtained the best model! (general and schematic should be fine) -->
+This script produces a csv file containing the predictions `Kaggle_CDM_submission.csv`
 
 ### Implementation of class methods.
 
