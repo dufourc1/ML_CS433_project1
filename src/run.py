@@ -15,16 +15,17 @@ from Regressions import *
 
 def X_processing(X):
 
-    # add log transformations
+    # add log transformations on selected features with translation
+    # to avoid taking the logarithm of negative values
 
     x_nan = X.copy()
     x_nan[x_nan==-999]=np.nan
 
     selected_features = [3,8,13,16,19,23,29]
-    selected_features_plus = [3,1,1,1,2,2,1]
+    selected_features_translation = [3,1,1,1,2,2,1]
 
     for i, feature in enumerate(selected_features):
-        x_nan[:,feature] = log_plus(x_nan[:,feature], selected_features_plus[i])
+        x_nan[:,feature] = log_plus(x_nan[:,feature], selected_features_translation[i])
 
     x_nan[np.isnan(x_nan)]=-999
 
