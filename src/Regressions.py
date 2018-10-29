@@ -6,6 +6,7 @@ All functions return w and loss , which is the last weight vector of the method 
 import numpy as np
 from costs import *
 
+
 #*****************************************
 # PREDICTORS
 #-----------------------------------------
@@ -87,7 +88,7 @@ def least_squares_GD(y, tx, initial_w, max_iters=500, gamma=0.05, *args, pred=Fa
     if pred:
         out.append(linear_predictor)
     out.append(w)
-    out.append(calculate_mse(err))
+    out.append(loss_f(err_f(y, tx, linear_predictor, w)))
 
     return out
 
@@ -219,7 +220,7 @@ def reg_logistic_regression(y, x, lambda_, initial_w=None, max_iters = 1000, gam
         w = w - gamma * grad
         # calculate loss
         # y = y.reshape(len(y),1)
-        loss = np.mean(abs(y - categories(pred_logistic(x,w))))
+        loss = loss_f(err_f(y, tx, pred_logistic, w))
         if printing:
             print("Gradient Descent({bi}/{ti}):loss = {l}".format(
               bi=n_iter, ti=max_iters - 1, l = loss))
