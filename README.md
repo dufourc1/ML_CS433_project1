@@ -21,12 +21,15 @@ Graphical:
 
 ### Prerequisites
 
-The folder structure is the following:
+The folder structure has to be the following:
 
     .
     ├── Data                    # Data files, in .csv
+        ├── train.csv
+        └── test.csv
     ├── src                     # Source files
     └── README.md
+    
 
 All the scripts are in src, where in `run.py` you can find the code that generates our prediction.
 
