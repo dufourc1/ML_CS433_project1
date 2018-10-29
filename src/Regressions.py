@@ -82,7 +82,7 @@ def least_squares_GD(y, tx, initial_w, max_iters=500, gamma=0.05, *args, pred=Fa
     printing    If 'True' print the loss and first 2 parameters estimate at each step. False by default.
     """
     # Define parameters to store w and loss
-    w, err = gradient_descent(y, tx, initial_w, which_loss="mse", gamma=gamma, max_iters=max_iters, all_step=all_step, printing=printing)
+    w, err = gradient_descent(y, tx, initial_w.reshape(tx.shape[1]), which_loss="mse", gamma=gamma, max_iters=max_iters, all_step=all_step, printing=printing)
     out = []
     if pred:
         out.append(linear_predictor)
@@ -117,9 +117,11 @@ def least_squares_SGD(y, tx, initial_w, batch_size=1, max_iters=500, gamma=0.05,
     if pred:
         out.append(linear_predictor)
     if all_step:
-        out.append([ws, losses])
+        out.append(ws)
+        out.append(losses)
     else:
-        out.append([ws[-1], losses[-1]])
+        out.append(ws[-1])
+        out.append(losses[-1])
     return out
 
 
@@ -178,20 +180,20 @@ def sigmoid(z):
     return np.exp(z)/(1+np.exp(z))
 
 
-def logistic_regression(y, x, w=None, max_iters = 1000, gamma = 0.000005, printing = False, pred = False):
+def logistic_regression(y, tx, w=None, max_iters = 1000, gamma = 0.000005, printing = False, pred = False):
 
     '''
-    compute the logistic regression on the data x,y, return the probability to be 1 in the classification problem (0,1), using gradient descent
+    compute the logistic regression on the data tx,y, return the probability to be 1 in the classification problem (0,1), using gradient descent
     y_proba1 = Logistic_regression(...)
     Have to add intercept to the data !
     '''
-    
+
     if (w is None) or (len(w) != tx.shape[1]):
         w = np.zeros(tx.shape[1])
 
-    w, _ = gradient_descent(y, x, w, which_loss="logistic", gamma=gamma, max_iters=max_iters, all_step=False, printing=printing)
+    w, _ = gradient_descent(y, tx, w, which_loss="logistic", gamma=gamma, max_iters=max_iters, all_step=False, printing=printing)
 
-    loss = np.mean(abs(y - categories(pred_logistic(x,w))))
+    loss = loss_f(err_f(y, tx, pred_logistic, w))
     # w = w.reshape(len(w))
     if pred:
         return pred_logistic, w, loss
@@ -321,7 +323,6 @@ def multi_cross_validation(y, x, k_fold, transformations=[[id, []]], methods=[[l
     # split data in k fold
     k_indices = build_k_indices(y, k_fold, seed)
     # define lists to store the loss of training data and test data
-    # ATTENTION: not sure if good idea to store everything.
     predictors = []
     ws = []
     losses_tr = []

@@ -30,6 +30,21 @@ def category_error(y, tx, pred_func, w):
 # GLOBAL ERROR FUNCTION
 err_f = category_error
 
+def set_err_f(kind):
+    '''Change the default error function.
+        kind    Kind of target (possible: 'cont', 'cat')
+    '''
+    global err_f
+    err_switcher = {
+        'cont': error,
+        'cat': category_error
+    }
+    err_f = err_switcher.get(kind, error)
+
+#**************************************
+# LOSSES
+#--------------------------------------
+
 def calculate_mse(e):
     """Calculate the mse for vector e."""
     return 1/2*np.mean(e**2)
@@ -44,8 +59,19 @@ def calculate_rmse(e):
     return math.sqrt(2.0*calculate_mse(e))
 
 #****************************************
-# GLOBAL LOSS FUNCTION
+# GLOBAL LOSS FUNCTIONS
 loss_f = calculate_mae
+def set_loss_f(loss):
+    '''Change the default loss function used in the cross validation.
+        loss    Desired loss function (possible: 'mae', 'mse', 'rmse');
+'''
+    global loss_f
+    loss_switcher = {
+        'mae': calculate_mae,
+        'mse': calculate_mse,
+        'rmse': calculate_rmse
+    }
+    loss_f = loss_switcher.get(loss, calculate_mae)
 
 def calculate_loss(y, tx, w, loss, kind):
     """Calculate the loss.
