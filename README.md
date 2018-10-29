@@ -43,10 +43,11 @@ This script produces a csv file containing the predictions `Kaggle_CDM_submissio
   a) load the data 
 
   b) data processing:
-    1. apply the log transformations and the translation needed
-    2. impute the missing values with the median
-    3. normalize the data
-    4. split the variable `num_jet` into 4 categorical variables
+  
+        - apply the log transformations and the translation needed
+        - impute the missing values with the median
+        - normalize the data
+        - split the variable `num_jet` into 4 categorical variables
   b) Polynomial extension of degree 4 of the data
 
   c) add interactions between the categorical variables and the continuous features
