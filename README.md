@@ -38,24 +38,25 @@ All the scripts are in src, where in `run.py` you can find the code that generat
 
 ### run.py
 
-This script produces a csv file containing the predictions `Kaggle_CDM_submission.csv`.
+This script produces a csv file containing the predictions `Kaggle_CDM_submission.csv`. The following are executed:
 
-  a) load the data 
+  a) loading the data 
 
   b) data processing:
   
-        - apply the log transformations and the translation needed
+        - applying the log transformations with translation
         - impute the missing values with the median
         - normalize the data
         - split the variable `num_jet` into 4 categorical variables
-  b) Polynomial extension of degree 4 of the data
+  b) polynomial extension of degree 4 of the data
 
-  c) add interactions between the categorical variables and the continuous features
+  c) interactions between the categorical variables and the continuous features
 
-  d) train a Ridge regression model, using `cross_validation` to determine the hyper-parameter `lambda`
+  d) training a Ridge regression model, using `cross_validation` to determine the hyper-parameter `lambda`
+  
+  e) training the Ridge regression model on the whole training data set with the determined `lambda` to obtain the weight vector w
 
-  e) compute predictions and create the .csv file
-
+  f) compute predictions and create the .csv file
 
 
 The data preprocessing applies log transformation to a specific set of features after translating some of them. Then it imputes the mean for the missing values and take out the phi and eta features out.
@@ -84,7 +85,7 @@ Since our goal is to find a classification model, we have that all functions com
 
 If one desires to implement our functions for different tasks, it is enough to set the two global functions `err_f` and `loss_f` to the desired ones.
 
-| Possible `loss_f`s |            | Possible `err_f`s |
+| Possible `loss_f` |            | Possible `err_f` |
 |--------------------|------------|--------------------|
 | `calculate_mae`    | MAE        | `error` | Return the distance between predicted end true values (continuous estimation)
 | `calculate_mse`    | MSE        | `category_error` | Return the error indicator (as explained above) |
@@ -97,11 +98,11 @@ They can be set as follows:
 
 ### Notes on `cross_validation` and `multi_cross_validation`
 
-These are the two main functions inplemented in order to chose our model, and in particular to get an estimation of the prediction error.
+These are the two main functions inplemented in order to choose our model, and in particular to get an estimation of the prediction error.
 
 * `cross_validation(y, tx, k_fold, method, *args_method[, k_indices, seed])` compute the k-fold cross validation for the estimation of `y` using a the method-function stored (as pointer) in the argument `method`. The arguments necessary for the `method` are to be passed freely after method. It returns `predictor, w, loss_tr, loss_te`, which are, in order, the predicting function, the mean of the trained weights, the mean of the train error and the estimate test error.
 
-* `multi_cross_validation(y, x, k_fold[, transformations=[[id, []]], methods=[[least_squares, []]], seed=1, only_best=True])` Perform automatically the cross validation on all the combinations of transformations in the `transformations` list (their parameters have to be passed as a list coupled with the transformation) and methods with changing parameters in the `methods` list (the coupled list have in this case to be a list of the tuples of parameters combinations to test.) It then plot the estimated losses (both on train and test) ans outputs `predictor, weight, losses_tr, losses_te, transformations_list, methods_list`. If `only_best=True`, those are the variables corresponding to the lowest test-error estimate, otherwise they contain the variables computed at each step. An implementation example can be found in the documentation.
+* `multi_cross_validation(y, x, k_fold[, transformations=[[id, []]], methods=[[least_squares, []]], seed=1, only_best=True])` Perform automatically the cross validation on all the combinations of transformations in the `transformations` list (their parameters have to be passed as a list coupled with the transformation) and methods with changing parameters in the `methods` list (the coupled list have in this case to be a list of the tuples of parameters combinations to test.) It then plots the estimated losses (both on train and test) and outputs `predictor, weight, losses_tr, losses_te, transformations_list, methods_list`. If `only_best=True`, those are the variables corresponding to the lowest test-error estimate, otherwise they contain the variables computed at each step. An implementation example can be found in the documentation.
 
 ## Authors
 
