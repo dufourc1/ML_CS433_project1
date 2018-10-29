@@ -6,7 +6,7 @@ In this README you will find general information about the methods, and a more d
 
 ## Getting Started
 
-The code provided was tested with Python 3.6.5.
+The provide code was tested with Python 3.6.5.
 The following libraries are used within the script:
 
 Computational:
