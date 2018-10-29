@@ -69,7 +69,7 @@ k_fold = 5
 transformations = [[id,[]]]
 methods = [[ridge_regression, lambdas]]
 predictor, w, loss_tr, loss_te, transformation, method = multi_cross_validation(y_tr, tx, k_fold, transformations=transformations, methods=methods, seed=1, only_best=True)
-
+func, arg = method
 #get the optimized w with the optimal determined lambda
 predictor, w, loss = func(y_tr, tx, par, pred = True)
 
