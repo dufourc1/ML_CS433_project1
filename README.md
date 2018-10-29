@@ -29,7 +29,7 @@ The folder structure has to be the following:
         └── test.csv
     ├── src                     # Source files
     └── README.md
-    
+
 
 All the scripts are in src, where in `run.py` you can find the code that generates our prediction.
 
@@ -38,7 +38,26 @@ All the scripts are in src, where in `run.py` you can find the code that generat
 
 ### run.py
 
-This script produces a csv file containing the predictions `Kaggle_CDM_submission.csv`
+This script produces a csv file containing the predictions `Kaggle_CDM_submission.csv`.
+
+  a) load the data 
+
+  b) data processing:
+    1. apply the log transformations and the translation needed
+    2. impute the missing values with the median
+    3. normalize the data
+    4. split the variable `num_jet` into 4 categorical variables
+  b) Polynomial extension of degree 4 of the data
+
+  c) add interactions between the categorical variables and the continuous features
+
+  d) train a 'Ridge regression model', using 'cross_validation' to determine the hyper-parameter `lambda`
+
+  e) compute predictions and create the .csv file
+
+
+
+The data preprocessing applies log transformation to a specific set of features after translating some of them. Then it imputes the mean for the missing values and take out the phi and eta features out.
 
 ### Implementation of class methods.
 
