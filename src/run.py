@@ -70,14 +70,15 @@ k_fold = 5
 transformations = [[id,[]]]
 methods = [[ridge_regression, lambdas]]
 predictor, w, loss_tr, loss_te, transformation, method = multi_cross_validation(y_tr, tx, k_fold, transformations=transformations, methods=methods, seed=1, only_best=True)
-func, arg = method
+
+func, args = method
 #get the optimized w with the optimal determined lambda
-predictor, w, loss = func(y_tr, tx, par, pred = True)
+predictor, w, loss = func(y_tr, tx, args, pred = True)
 
 ###### predict label with the optimized w vector
 
 tx_te = X_processing(X_te)
-y_pred = predict_labels(w,tx_te)
+y_pred = predictor(tx_te, w)
 # get the prediction in the binary -1, 1 format
 y_predict = categories(y_pred)
 y_predict[y_predict==0]=-1
